@@ -3,6 +3,7 @@
 
 CREATE TABLE permit(
 	permit_id SERIAL,
+	permit_index INTEGER UNIQUE NOT NULL,
 	permit_name VARCHAR(100) NOT NULL,
 	PRIMARY KEY (permit_id)
 )
@@ -18,12 +19,8 @@ CREATE TABLE permit(
 -- account		: quản lý tài khoản
 
 
-CREATE TABLE role(
-	role_id SERIAL,
-	role_name VARCHAR(20) NOT NULL,
-	permit_list INTEGER ARRAY,
-	PRIMARY KEY (role_id)
-)
+-- create enum role
+CREATE TYPE tp_role AS ENUM ('USER', 'STAFF', 'ADMIN');
 
 
 -- create uuid-ossp module
@@ -32,7 +29,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE users(
 	user_id UUID DEFAULT uuid_generate_v4(),
-	role_id INTEGER NOT NULL,
+	role tp_role NOT NULL,
+	permit_list INTEGER ARRAY,
 	email TEXT NOT NULL,
 	password VARCHAR(20) NOT NULL,
 	name VARCHAR(20),
@@ -50,8 +48,7 @@ CREATE TABLE users(
 	refresh_token TEXT DEFAULT '',
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (user_id),
-	CONSTRAINT fk_users_role FOREIGN KEY(role_id) REFERENCES role(role_id)
+	PRIMARY KEY (user_id)
 )
 
 
