@@ -22,10 +22,10 @@ CREATE TABLE permit(
 -- create enum role
 CREATE TYPE tp_role AS ENUM ('USER', 'STAFF', 'ADMIN');
 
+-- select enum_range(null::tp_role)
 
 -- create uuid-ossp module
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 
 CREATE TABLE users(
 	user_id UUID DEFAULT uuid_generate_v4(),
@@ -136,10 +136,9 @@ CREATE TABLE product(
 )
 
 
-
-CREATE TABLE detail_into_stock(
+CREATE TABLE medicine_into_stock(
 	invoice_into_stock_id INTEGER NOT NULL,
-	merchandise_id INTEGER NOT NULL,
+	medicine_id INTEGER NOT NULL,
 	lot_number VARCHAR(40),
 	manufacture_date DATE NOT NULL,
 	expiration_date	DATE NOT NULL,
@@ -151,10 +150,30 @@ CREATE TABLE detail_into_stock(
 	destroyed BOOLEAN,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (invoice_into_stock_id, merchandise_id),
-	CONSTRAINT fk_detailintostock_invoiceintostock FOREIGN KEY(invoice_into_stock_id) REFERENCES invoice_into_stock(invoice_into_stock_id),
-	CONSTRAINT fk_detailintostock_medicine FOREIGN KEY(merchandise_id) REFERENCES medicine(medicine_id),
-	CONSTRAINT fk_detailintostock_product FOREIGN KEY(merchandise_id) REFERENCES product(product_id)
+	PRIMARY KEY (invoice_into_stock_id, medicine_id),
+	CONSTRAINT fk_medicineintostock_invoiceintostock FOREIGN KEY(invoice_into_stock_id) REFERENCES invoice_into_stock(invoice_into_stock_id),
+	CONSTRAINT fk_medicineintostock_medicine FOREIGN KEY(medicine_id) REFERENCES medicine(medicine_id)
+)
+
+
+
+CREATE TABLE product_into_stock(
+	invoice_into_stock_id INTEGER NOT NULL,
+	product_id INTEGER NOT NULL,
+	lot_number VARCHAR(40),
+	manufacture_date DATE NOT NULL,
+	expiration_date	DATE NOT NULL,
+	input_quantity INTEGER,
+	specification INTEGER,
+	import_price INTEGER,
+	sell_price	INTEGER,
+	sold_quantity INTEGER,
+	destroyed BOOLEAN,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (invoice_into_stock_id, product_id),
+	CONSTRAINT fk_productintostock_invoiceintostock FOREIGN KEY(invoice_into_stock_id) REFERENCES invoice_into_stock(invoice_into_stock_id),
+	CONSTRAINT fk_productintostock_product FOREIGN KEY(product_id) REFERENCES product(product_id)
 )
 
 

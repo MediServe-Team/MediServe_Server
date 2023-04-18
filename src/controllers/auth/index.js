@@ -7,7 +7,7 @@ const { createAccessToken, createRefreshToken, verifyRefreshToken } = require('.
 module.exports = {
   register: async (req, res, next) => {
     try {
-      const { email, password, firstName, lastName } = req.body;
+      const { email, password, name, fullName } = req.body;
 
       // validation data
       const { error } = registerValidate(req.body);
@@ -30,8 +30,8 @@ module.exports = {
       const user = {
         email,
         password: hashPassword,
-        firstName,
-        lastName,
+        name,
+        fullName,
       };
 
       const saveUser = await prisma.User.create({
