@@ -1,0 +1,7 @@
+# Define Tag
+
+tags:
+  - name: User
+    description: Everything about your User
+  - name: Auth
+    description: Everything about your Auth
