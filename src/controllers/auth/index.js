@@ -93,6 +93,7 @@ module.exports = {
       });
 
       res.status(200).json({
+        status: 200,
         user,
         accessToken, // continue save accesstoken to store redux
       });

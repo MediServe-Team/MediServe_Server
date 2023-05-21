@@ -32,7 +32,7 @@ CREATE TABLE users(
 	role tp_role NOT NULL,
 	permit_list INTEGER ARRAY,
 	email TEXT NOT NULL,
-	password VARCHAR(20) NOT NULL,
+	password TEXT NOT NULL,
 	name VARCHAR(20),
 	full_name VARCHAR(40),
 	gender BOOLEAN,

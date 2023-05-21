@@ -53,7 +53,7 @@ model User {
   updatedAt    DateTime? @updatedAt @map("updated_at")
 
   // foreign key
-  invoiceIntoStocks InvoiceIntoStock[]
+  InvoiceIntoStocks InvoiceIntoStock[]
   ReceiptCreated    Receipt[]          @relation("StaffCreateReceipt")
   ReceiptPurchase   Receipt[]          @relation("CustomerGetReceipt")
   Prescriptions     Prescription[]

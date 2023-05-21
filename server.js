@@ -1,14 +1,17 @@
 require('dotenv').config();
 const express = require('express');
 const createError = require('http-errors');
-// const cors = require("cors");
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const app = express();
 const route = require('./src/routes');
 
 app.use(express.json());
-
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 
 route(app);
 
