@@ -1,4 +1,3 @@
-const prisma = require('../config/prisma.instance.js');
 const meServices = require('../services/me.services.js');
 
 module.exports = {
