@@ -1,19 +1,11 @@
 const { prisma } = require('../config/prisma.instance.js');
-const { passwordValidate } = require('../helpers/validation.js');
-const createError = require('http-errors');
-const bcrypt = require('bcrypt');
+const userServices = require('../services/user.services.js');
 
 module.exports = {
   getUser: async (req, res, next) => {
     try {
       const { id } = req.params;
-
-      const data = await prisma.user.findUnique({
-        where: {
-          id,
-        },
-      });
-
+      const data = await userServices.getUserInfo(id);
       res.status(200).json({
         status: 200,
         message: 'get user infomation success',
@@ -26,8 +18,7 @@ module.exports = {
 
   getAllUser: async (req, res, next) => {
     try {
-      const data = await prisma.user.findMany();
-
+      const data = await userServices.getAllUser();
       res.status(200).json({
         status: 200,
         message: 'get all user success',
@@ -41,7 +32,6 @@ module.exports = {
   editUser: async (req, res, next) => {
     try {
       const { id } = req.params;
-
       const {
         name,
         fullName,
@@ -71,13 +61,7 @@ module.exports = {
         identityCard,
         numOfPPC,
       };
-
-      const data = await prisma.user.update({
-        data: newUserInfo,
-        where: {
-          id,
-        },
-      });
+      const data = await userServices.editUserById(id, newUserInfo);
 
       res.status(200).json({
         status: 200,
@@ -93,11 +77,7 @@ module.exports = {
   deleteUser: async (req, res, next) => {
     try {
       const { id } = req.params;
-      const deleteUser = await prisma.user.delete({
-        where: {
-          id,
-        },
-      });
+      const deleteUser = await userServices.deleteUserById(id);
       res.status(200).json({
         status: 200,
         message: 'deleted user success',
@@ -112,35 +92,11 @@ module.exports = {
     try {
       const { id } = req.params;
       const { currPassword, newPassword } = req.body;
-
-      if (currPassword === newPassword) {
-        throw createError.Conflict('The new password is the same as the old password');
-      }
-
-      //*   validate new password
-      const { error } = passwordValidate(newPassword);
-      if (error) {
-        throw createError(error.details[0].message);
-      }
-
-      //* hash new password
-      const salt = await bcrypt.genSalt(10);
-      const hashNewPass = await bcrypt.hash(newPassword, salt);
-
-      //* update new password
-      const data = await prisma.user.update({
-        data: {
-          password: hashNewPass,
-        },
-        where: {
-          id,
-        },
-      });
-
+      const returnData = await userServices.updatePassWordById(id, currPassword, newPassword);
       res.status(200).json({
         status: 200,
         message: 'update password success',
-        data,
+        data: returnData,
       });
     } catch (err) {
       next(err);
@@ -151,20 +107,11 @@ module.exports = {
     try {
       const { id } = req.params;
       const { role } = req.body;
-
-      const data = await prisma.user.update({
-        data: {
-          role,
-        },
-        where: {
-          id,
-        },
-      });
-
+      const returnData = await userServices.updateRoleById(id, role);
       res.status(200).json({
         status: 200,
         message: 'update role for account success',
-        data,
+        data: returnData,
       });
     } catch (err) {
       next(err);
@@ -176,20 +123,11 @@ module.exports = {
     try {
       const { id } = req.params;
       const { permitList } = req.body;
-
-      const data = await prisma.user.update({
-        data: {
-          permitList,
-        },
-        where: {
-          id,
-        },
-      });
-
+      const returnData = await userServices.updatePermitById(id, permitList);
       res.status(200).json({
         status: 200,
         message: 'update permit for account success',
-        data,
+        data: returnData,
       });
     } catch (err) {
       next(err);

@@ -84,13 +84,13 @@ const verifyRefreshToken = async (token) => {
 const verifyAdminAccess = async (req, res, next) => {
   //* This middleware apply after use verify access Token.
   if (req.payload.role === 'ADMIN') next();
-  return next(createError.Unauthorized('Only admin can to use this resource'));
+  else return next(createError.Unauthorized('Only admin can to use this resource'));
 };
 
 const verifyStaffAdminAccess = async (req, res, next) => {
   //* This middleware apply after use verify access Token.
   if (req.payload.role === 'STAFF' || req.payload.role === 'ADMIN') next();
-  return next(createError.Unauthorized('Only staff and admin can to use this resource'));
+  else return next(createError.Unauthorized('Only staff and admin can to use this resource'));
 };
 
 module.exports = {
