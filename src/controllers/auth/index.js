@@ -70,8 +70,8 @@ module.exports = {
         throw createError.Unauthorized();
       }
 
-      const accessToken = await createAccessToken(user.id, user.email);
-      const refreshToken = await createRefreshToken(user.id, user.email);
+      const accessToken = await createAccessToken(user.id, user.email, user.role);
+      const refreshToken = await createRefreshToken(user.id, user.email, user.role);
 
       // save new refresh token
       await prisma.User.update({
@@ -110,8 +110,8 @@ module.exports = {
       }
 
       const payload = await verifyRefreshToken(refreshToken);
-      const newAccessToken = await createAccessToken(payload.userId, payload.email);
-      const newRefreshToken = await createRefreshToken(payload.userId, payload.email);
+      const newAccessToken = await createAccessToken(payload.userId, payload.email, payload.role);
+      const newRefreshToken = await createRefreshToken(payload.userId, payload.email, payload.role);
 
       // Update refresh token to DB
       await prisma.User.update({

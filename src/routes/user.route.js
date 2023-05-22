@@ -1,33 +1,34 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/user.controller');
+const { verifyStaffAdminAccess, verifyAdminAccess, verifyAccessToken } = require('../helpers/jwt.service');
 
-//! verify ADMIN
+//! can use: STAFF, ADMIN
 //* [GET] /users/all     -> Get all user
-router.get('/all', userController.getAllUser);
+router.get('/all', verifyStaffAdminAccess, userController.getAllUser);
+
+//! can use: STAFF, ADMIN
+//* [GET] /users/:id     -> Get an user by id
+router.get('/:id', verifyStaffAdminAccess, userController.getUser);
+
+//! can use: ADMIN
+//* [PUT] /users/update-info/:id     -> Edit an user by id
+router.put('/update-user-info/:id', verifyAdminAccess, userController.editUser);
 
 //! verify ADMIN
-//* [GET] /users/:id     -> Get an user
-router.get('/:id', userController.getUser);
+//* [DELETE] /users/:id      -> Delete an user by id
+router.delete('/:id', verifyAdminAccess, userController.deleteUser);
 
-//! verify ADMIN
-//* [PUT] /users/update-info/:id     -> Edit an user
-// router.put('/update-info/:id', userController.editUser);
+//! can use: ADMIN
+//* [PUT] /users/change-pass/:id    -> Change password of user by id
+router.put('/change-pass/:id', verifyAdminAccess, userController.changePass);
 
-//! verify ADMIN
-//* [DELETE] /users/:id      -> Delete an user
-router.delete('/:id', userController.deleteUser);
+//! can use: ADMIN
+//* [PUT] /users/change-role/:id    -> Change role  of user by id
+router.put('/change-role/:id', verifyAdminAccess, userController.changeRole);
 
-//! verify AccessToken
-//* [PUT] /users/change-pass/:id    -> Change password
-// router.put('/change-pass/:id', userController.changePass);
-
-//! verify ADMIN
-//* [PUT] /users/change-role/:id    -> Change role
-router.put('/change-role/:id', userController.changeRole);
-
-//! verify ADMIN
-// *change permit
-router.put('/change-permit/:id', userController.changePermit);
+//! can use: ADMIN
+//* [PUT] /users/change-permit/:id      -> Change list permit of staff by id
+router.put('/change-permit/:id', verifyAdminAccess, userController.changePermit);
 
 module.exports = router;

@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken');
 const createError = require('http-errors');
 
-const createAccessToken = async (userId, email) => {
+const createAccessToken = async (userId, email, role) => {
   return new Promise((resolve, reject) => {
-    const payload = { userId, email };
+    const payload = { userId, email, role };
 
     const options = {
       algorithm: 'HS256',
@@ -45,11 +45,12 @@ const verifyAccessToken = async (req, res, next) => {
   });
 };
 
-const createRefreshToken = async (userId, email) => {
+const createRefreshToken = async (userId, email, role) => {
   return new Promise((resolve, reject) => {
     const payload = {
       userId,
       email,
+      role,
     };
 
     const options = {
@@ -80,9 +81,23 @@ const verifyRefreshToken = async (token) => {
   });
 };
 
+const verifyAdminAccess = async (req, res, next) => {
+  //* This middleware apply after use verify access Token.
+  if (req.payload.role === 'ADMIN') next();
+  return next(createError.Unauthorized('Only admin can to use this resource'));
+};
+
+const verifyStaffAdminAccess = async (req, res, next) => {
+  //* This middleware apply after use verify access Token.
+  if (req.payload.role === 'STAFF' || req.payload.role === 'ADMIN') next();
+  return next(createError.Unauthorized('Only staff and admin can to use this resource'));
+};
+
 module.exports = {
   createAccessToken,
   verifyAccessToken,
   createRefreshToken,
   verifyRefreshToken,
+  verifyAdminAccess,
+  verifyStaffAdminAccess,
 };

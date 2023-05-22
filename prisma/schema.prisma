@@ -41,7 +41,7 @@ model User {
   gender       Boolean?  @map("gender")
   age          Int?      @map("age")
   dateOfBirth  DateTime? @map("date_of_birth")
-  phoneNumber  Int?      @map("phone_number")
+  phoneNumber  String?   @map("phone_number")
   avatar       String?   @map("avatar")
   address      String?   @map("address")
   discount     Int?      @map("discount")
