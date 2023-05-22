@@ -1,18 +1,23 @@
 const express = require('express');
 const router = express.Router();
 const invoiceIntoStockController = require('../controllers/invoiceIntoStock.controller');
+const invoiceIntoStockServices = require('../services/invoiceIntoStock.services');
 
 //* -> Get invoice with paging group by date
 //* [GET] /invoice-into-stocks/bydate?from=""&to=""
 router.get('/by-date', invoiceIntoStockController.getInvoiceByDate);
 
-//* -> Get detail invoice into stock
+//* [GET] /invoice-into-stocks/:id      -> Get detail invoice into stock
+router.get('/:id', invoiceIntoStockController.getDetailInvoice);
 
-//* -> Create an invoice into stock
+//* [POST] /invoice-into-stocks/create      -> Create an invoice into stock
+router.post('/create', invoiceIntoStockController.createInvoice);
 
-//* -> Delete an invoice into stock
+//* [DELETE] /invoice-into-stocks/:id -> Delete an invoice into stock
+router.delete('/:id', invoiceIntoStockController.deleteInvoice);
 
-//* -> Update an invoice into stock
+//* [PUT] /invoice-into-stocks/:id  -> Update an invoice into stock
+router.put('/id', invoiceIntoStockController.editInvoice);
 
 module.exports = router;
 

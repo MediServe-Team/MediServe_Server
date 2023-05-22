@@ -16,9 +16,7 @@ module.exports = {
                 lte: new Date(to),
               },
             },
-            orderBy: {
-              createdAt: order,
-            },
+            orderBy: { createdAt: order },
           });
           resolve(data);
         });
@@ -39,6 +37,17 @@ module.exports = {
       };
       const data = await Promise.all([getTotalInvoiceByDate(), countTotalInvoice()]);
       return Promise.resolve({ listInvoices: data[0], total: data[1] });
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  getInvoiceById: async (id) => {
+    try {
+      const data = await prisma.invoiceIntoStock.findUnique({
+        where: { id: Number(id) },
+      });
+      return Promise.resolve(data);
     } catch (err) {
       throw err;
     }
