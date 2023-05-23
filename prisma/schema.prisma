@@ -104,7 +104,6 @@ model MedicineUnit {
 model Medicine {
   id                      Int                 @id @default(autoincrement()) @map("medicine_id")
   categoryId              Int                 @map("category_id")
-  category                Category            @relation(fields: [categoryId], references: [id])
   medicineName            String              @map("medicine_name")
   registrationNumber      String              @map("registration_number")
   dosageForm              String              @map("dosage_form")
@@ -123,6 +122,8 @@ model Medicine {
   note                    String?             @map("note")
   createdAt               DateTime?           @default(now()) @map("created_at")
   updatedAt               DateTime?           @updatedAt @map("updated_at")
+  // foreign key
+  category                Category            @relation(fields: [categoryId], references: [id])
   // reference
   MedicineIntoStocks      MedicineIntoStock[]
   MedicineGuides          MedicineGuide[]
