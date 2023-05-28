@@ -1,5 +1,5 @@
 const { prisma } = require('../config/prisma.instance');
-import createError from 'http-errors';
+const createError = require('http-errors');
 
 module.exports = {
   getAllCategory: async () => {

@@ -79,6 +79,7 @@ CREATE TABLE category(
 
 CREATE TABLE medicine_unit(
 	medicine_unit_id SERIAL,
+	type VARCHAR(20) NOT NULL,
 	unit_name VARCHAR(20),
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
