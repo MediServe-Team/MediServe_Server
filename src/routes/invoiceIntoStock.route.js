@@ -14,10 +14,10 @@ router.get('/:id', invoiceIntoStockController.getDetailInvoice);
 router.post('/create', invoiceIntoStockController.createInvoice);
 
 //* [DELETE] /invoice-into-stocks/:id -> Delete an invoice into stock
-router.delete('/:id', invoiceIntoStockController.deleteInvoice);
+router.delete('/delete/:id', invoiceIntoStockController.deleteInvoice);
 
 //* [PUT] /invoice-into-stocks/:id  -> Update an invoice into stock
-router.put('/id', invoiceIntoStockController.editInvoice);
+router.put('/update/:id', invoiceIntoStockController.editInvoice);
 
 module.exports = router;
 

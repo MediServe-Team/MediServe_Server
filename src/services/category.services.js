@@ -1,4 +1,5 @@
 const { prisma } = require('../config/prisma.instance');
+import createError from 'http-errors';
 
 module.exports = {
   getAllCategory: async () => {
@@ -13,7 +14,7 @@ module.exports = {
   getCategoryById: async (id) => {
     try {
       const data = await prisma.category.findUnique({
-        where: { id },
+        where: { id: Number(id) },
       });
       return Promise.resolve(data);
     } catch (err) {
@@ -37,8 +38,10 @@ module.exports = {
       // check category diffrence default type
       const categoryData = await prisma.category.findUnique({ where: { id } });
       if (categoryData.isDefault === true) {
-        //! cant update
+        throw createError[405]('Can not update category default of system');
       }
+      const data = await prisma.category.update({ data: newData, where: { id: Number(id) } });
+      return Promise.resolve(data);
     } catch (err) {
       throw err;
     }

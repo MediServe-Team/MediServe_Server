@@ -3,13 +3,13 @@ const router = express.Router();
 const userController = require('../controllers/user.controller');
 const { verifyStaffAdminAccess, verifyAdminAccess, verifyAccessToken } = require('../helpers/jwt.service');
 
-//! can use: STAFF, ADMIN
+//! can use: ADMIN
 //* [GET] /users/all     -> Get all user
-router.get('/all', verifyAccessToken, verifyStaffAdminAccess, userController.getAllUser);
+router.get('/all', verifyAccessToken, verifyAdminAccess, userController.getAllUser);
 
-//! can use: STAFF, ADMIN
+//! can use: ADMIN
 //* [GET] /users/:id     -> Get an user by id
-router.get('/:id', verifyAccessToken, verifyStaffAdminAccess, userController.getUser);
+router.get('/:id', verifyAccessToken, verifyAdminAccess, userController.getUser);
 
 //! can use: ADMIN
 //* [PUT] /users/update-info/:id     -> Edit an user by id

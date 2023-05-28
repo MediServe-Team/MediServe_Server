@@ -43,7 +43,6 @@ module.exports = {
     }
   },
 
-  //!!!   check: cant update is default, ...
   updateCategory: async (req, res, next) => {
     try {
       const { id } = req.params;
