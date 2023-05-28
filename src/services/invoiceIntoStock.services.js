@@ -1,4 +1,4 @@
-const { prisma } = require('..//config/prisma.instance');
+const { prisma } = require('../config/prisma.instance');
 
 module.exports = {
   getInvoiceByDate: async (from, to, sort) => {

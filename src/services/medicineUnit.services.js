@@ -32,6 +32,7 @@ module.exports = {
   deleteMedicineUnitById: async (id) => {
     try {
       const data = await prisma.medicineUnit.delete({ where: { id: Number(id) } });
+      return Promise.resolve(data);
     } catch (err) {
       throw err;
     }
