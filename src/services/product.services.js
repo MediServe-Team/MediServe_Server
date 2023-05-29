@@ -16,8 +16,8 @@ module.exports = {
       };
       let countTotalProduct = () => {
         return new Promise(async (resolve) => {
-          const totalProducs = await prisma.product.count();
-          resolve(totalProducs);
+          const totalProducts = await prisma.product.count();
+          resolve(totalProducts);
         });
       };
       const data = await Promise.all([getProducts(), countTotalProduct()]);

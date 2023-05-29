@@ -209,7 +209,7 @@ model Receipt {
   customerId      String          @map("customer_id")
   totalPayment    Int             @map("total_payment")
   givenByCustomer Int             @map("given_by_customer")
-  note            Int?            @map("note")
+  note            String?         @map("note")
   createdAt       DateTime?       @default(now()) @map("created_at")
   updatedAt       DateTime?       @updatedAt @map("updated_at")
   // foreign key
