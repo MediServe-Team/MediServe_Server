@@ -36,7 +36,7 @@ module.exports = {
   updateCategoryById: async (id, newData) => {
     try {
       // check category diffrence default type
-      const categoryData = await prisma.category.findUnique({ where: { id } });
+      const categoryData = await prisma.category.findUnique({ where: { id: Number(id) } });
       if (categoryData.isDefault === true) {
         throw createError[405]('Can not update category default of system');
       }

@@ -7,6 +7,8 @@ const invoiceIntoStockServices = require('../services/invoiceIntoStock.services'
 //* [GET] /invoice-into-stocks/bydate?from=""&to=""
 router.get('/by-date', invoiceIntoStockController.getInvoiceByDate);
 
+router.get('/product-filter', invoiceIntoStockController.filterProduct);
+
 //* [GET] /invoice-into-stocks/:id      -> Get detail invoice into stock
 router.get('/:id', invoiceIntoStockController.getDetailInvoice);
 

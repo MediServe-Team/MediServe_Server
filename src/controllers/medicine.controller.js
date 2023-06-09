@@ -69,7 +69,7 @@ module.exports = {
         note,
       };
 
-      const returnData = await medicineServices.createMedicine(newData);
+      const returnData = await medicineServices.createMedicine(newMedicine);
       res.status(201).json({
         status: 201,
         message: 'create new medicine success',

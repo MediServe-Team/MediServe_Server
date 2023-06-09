@@ -1,4 +1,5 @@
 const { prisma } = require('../config/prisma.instance');
+const createError = require('http-errors');
 
 module.exports = {
   getInvoiceByDate: async (from, to, sort) => {
@@ -37,6 +38,52 @@ module.exports = {
       };
       const data = await Promise.all([getTotalInvoiceByDate(), countTotalInvoice()]);
       return Promise.resolve({ listInvoices: data[0], total: data[1] });
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  filterProduct: async (search, categoryId) => {
+    try {
+      if (!search || !categoryId) {
+        throw createError.ExpectationFailed('expected "search" and "categoryId" in request!');
+      }
+
+      let getProduct = () => {
+        return new Promise(async (resolve) => {
+          const products = await prisma.product.findMany({
+            where: {
+              AND: [
+                {
+                  OR: [{ productName: { contains: search } }, { packingSpecification: { contains: search } }],
+                },
+                { categoryId: Number(categoryId) },
+              ],
+            },
+          });
+          resolve(products);
+        });
+      };
+
+      let getMedicine = () =>
+        new Promise(async (resolve) => {
+          const medicines = await prisma.medicine.findMany({
+            where: {
+              AND: [
+                {
+                  OR: [{ medicineName: { contains: search } }, { packingSpecification: { contains: search } }],
+                },
+                { categoryId: Number(categoryId) },
+              ],
+            },
+          });
+          resolve(medicines);
+        });
+
+      const result = await Promise.all([getMedicine(), getProduct()]);
+      const data = result[0].concat(result[1]);
+
+      return Promise.resolve(data);
     } catch (err) {
       throw err;
     }
