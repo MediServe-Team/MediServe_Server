@@ -46,9 +46,16 @@ module.exports = {
   //!!! handle create invoice + create medicine, product into stock with reference: reuse services "create" of medicine, pproduct
   createInvoice: async (req, res, next) => {
     try {
-      const {} = req.body;
-      // const newInvoice = {}
-      // handle create here
+      const { staffId, totalImportPrice, totalSellPrice, note, listItem } = req.body;
+      const newInvoice = { staffId, totalImportPrice, totalSellPrice, note };
+      const listProducts = Array.isArray(listItem) ? listItem.filter((item) => item.isMedicine === false) : [];
+      const listMedicines = Array.isArray(listItem) ? listItem.filter((item) => item.isMedicine === true) : [];
+      const data = await invoiceIntoStockServices.createNewInvoice(newInvoice, listProducts, listMedicines);
+      res.status(200).json({
+        status: 200,
+        message: 'create new invoice success',
+        data,
+      });
     } catch (err) {
       next(err);
     }
