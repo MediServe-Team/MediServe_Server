@@ -4,7 +4,7 @@ module.exports = {
   getDetailMedicine: async (req, res, next) => {
     try {
       const { id } = req.params;
-      const data = await medicineServices.getMedicineById();
+      const data = await medicineServices.getMedicineById(id);
       res.status(200).json({
         status: 200,
         message: 'get detail medicine success',

@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const invoiceIntoStockController = require('../controllers/invoiceIntoStock.controller');
-const invoiceIntoStockServices = require('../services/invoiceIntoStock.services');
 
-//* -> Get invoice with paging group by date
+//* [GET] /invoice-into-stocks/filter-history -> Get invoice with paging group by date
+router.get('/filter-history', invoiceIntoStockController.filterHistory);
+
 //* [GET] /invoice-into-stocks/bydate?from=""&to=""
 router.get('/by-date', invoiceIntoStockController.getInvoiceByDate);
 
