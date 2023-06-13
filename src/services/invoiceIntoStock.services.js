@@ -167,6 +167,28 @@ module.exports = {
     try {
       const data = await prisma.invoiceIntoStock.findUnique({
         where: { id: Number(id) },
+        include: {
+          MedicineIntoStocks: {
+            include: {
+              medicine: {
+                select: {
+                  medicineName: true,
+                  packingSpecification: true,
+                },
+              },
+            },
+          },
+          ProductIntoStocks: {
+            include: {
+              product: {
+                select: {
+                  productName: true,
+                  packingSpecification: true,
+                },
+              },
+            },
+          },
+        },
       });
       return Promise.resolve(data);
     } catch (err) {
