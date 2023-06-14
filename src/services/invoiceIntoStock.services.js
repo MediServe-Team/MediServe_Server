@@ -28,12 +28,16 @@ module.exports = {
       //* get all merchandise in stock
       const getListMedicineStock = () =>
         new Promise(async (resolve) => {
-          const data = await prisma.medicineIntoStock.findMany({ include: { medicine: true } });
+          const data = await prisma.medicineIntoStock.findMany({
+            include: { medicine: true, invoiceIntoStock: { select: { id: true } } },
+          });
           resolve(data);
         });
       const getListProductStock = () =>
         new Promise(async (resolve) => {
-          const data = await prisma.productIntoStock.findMany({ include: { product: true } });
+          const data = await prisma.productIntoStock.findMany({
+            include: { product: true, invoiceIntoStock: { select: { id: true } } },
+          });
           resolve(data);
         });
       const listMerChandise = await Promise.all([getListMedicineStock(), getListProductStock()]);
