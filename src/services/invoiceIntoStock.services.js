@@ -23,6 +23,116 @@ const formatGroupInvoiceByDate = (invoices) => {
 };
 
 module.exports = {
+  getMerchandiseInventory: async (type, search) => {
+    try {
+      // check type in query
+      const TYPES = ['all', 'preSoldOut', 'preExp', 'exp'];
+      const checkType = TYPES.includes(type) ? type : TYPES[0];
+
+      // get all merchandise in stock
+      const listMedicine = await prisma.medicineIntoStock.findMany({
+        // where: {
+        //   ...(search
+        //     ? {
+        //         OR: [
+        //           { lotNumber: { contains: search } },
+        //           {
+        //             medicine: {
+        //               OR: [
+        //                 { medicineName: { contains: search } },
+        //                 { packingSpecification: { contains: search } },
+        //                 { chemicalCode: { contains: search } },
+        //                 { chemicalName: { contains: search } },
+        //                 { dosageForm: { contains: search } },
+        //                 { registrationNumber: { contains: search } },
+        //               ],
+        //             },
+        //           },
+        //         ],
+        //       }
+        //     : {}),
+        // },
+        include: {
+          medicine: true,
+        },
+      });
+      const listProduct = await prisma.productIntoStock.findMany({
+        // where: {
+        //   ...(search
+        //     ? {
+        //         OR: [
+        //           { lotNumber: { contains: search } },
+        //           {
+        //             product: {
+        //               OR: [
+        //                 { productName: { contains: search } },
+        //                 { packingSpecification: { contains: search } },
+        //                 { chemicalCode: { contains: search } },
+        //                 { chemicalName: { contains: search } },
+        //                 { dosageForm: { contains: search } },
+        //                 { registrationNumber: { contains: search } },
+        //               ],
+        //             },
+        //           },
+        //         ],
+        //       }
+        //     : {}),
+        // },
+        include: {
+          product: true,
+        },
+      });
+      let data = listMedicine.concat(listProduct);
+
+      // filter by type
+      // switch (checkType) {
+      //   case 'preSoldOut':
+      //     data = data.filter((item) => item.inputQuantity - item.soldQuantity / item.specification < 2);
+      //     break;
+      //   case 'preExp':
+      //     data = data.filter((item) => {
+      //       const currentDate = new Date();
+      //       const expDate = new Date(item.expirationDate);
+      //       const nextThirtyDate = new Date();
+      //       nextThirtyDate.setDate(currentDate.getDate() + 30);
+      //       return expDate > currentDate && expDate <= nextThirtyDate;
+      //     });
+      //     break;
+      //   case 'exp':
+      //     data = data.filter((item) => {
+      //       const currentDate = new Date();
+      //       const expDate = new Date(item.expirationDate);
+      //       return expDate <= currentDate;
+      //     });
+      //     break;
+      //   default:
+      //     break;
+      // }
+
+      const allMerchandise = data;
+      const preSoldOutMerchandise = data.filter(
+        (item) => item.inputQuantity - item.soldQuantity / item.specification < 2,
+      );
+      const preExpMerchandise = data.filter((item) => {
+        const currentDate = new Date();
+        const expDate = new Date(item.expirationDate);
+        const nextThirtyDate = new Date();
+        nextThirtyDate.setDate(currentDate.getDate() + 30);
+        return expDate > currentDate && expDate <= nextThirtyDate;
+      });
+
+      const expMerchandise = data.filter((item) => {
+        const currentDate = new Date();
+        const expDate = new Date(item.expirationDate);
+        return expDate <= currentDate;
+      });
+
+      return Promise.resolve({ allMerchandise, preSoldOutMerchandise, preExpMerchandise, expMerchandise });
+    } catch (err) {
+      throw err;
+    }
+  },
+
   filterHistory: async (fromDate, toDate, sort, pageNumber, limit) => {
     try {
       //* defind option

@@ -1,6 +1,20 @@
 const invoiceIntoStockServices = require('../services/invoiceIntoStock.services');
 
 module.exports = {
+  getMerchandiseInventory: async (req, res, next) => {
+    try {
+      const { type, search } = req.query;
+      const data = await invoiceIntoStockServices.getMerchandiseInventory(type, search);
+      res.status(200).json({
+        status: 200,
+        message: 'get data inventory stock success',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   filterHistory: async (req, res, next) => {
     try {
       const { fromDate, toDate, sort, pageNumber, limit } = req.query;
