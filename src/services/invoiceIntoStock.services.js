@@ -23,96 +23,30 @@ const formatGroupInvoiceByDate = (invoices) => {
 };
 
 module.exports = {
-  getMerchandiseInventory: async (type, search) => {
+  getMerchandiseInventory: async () => {
     try {
-      // check type in query
-      const TYPES = ['all', 'preSoldOut', 'preExp', 'exp'];
-      const checkType = TYPES.includes(type) ? type : TYPES[0];
+      //* get all merchandise in stock
+      const getListMedicineStock = () =>
+        new Promise(async (resolve) => {
+          const data = await prisma.medicineIntoStock.findMany({ include: { medicine: true } });
+          resolve(data);
+        });
+      const getListProductStock = () =>
+        new Promise(async (resolve) => {
+          const data = await prisma.productIntoStock.findMany({ include: { product: true } });
+          resolve(data);
+        });
+      const listMerChandise = await Promise.all([getListMedicineStock(), getListProductStock()]);
+      const data = listMerChandise[0].concat(listMerChandise[1]);
 
-      // get all merchandise in stock
-      const listMedicine = await prisma.medicineIntoStock.findMany({
-        // where: {
-        //   ...(search
-        //     ? {
-        //         OR: [
-        //           { lotNumber: { contains: search } },
-        //           {
-        //             medicine: {
-        //               OR: [
-        //                 { medicineName: { contains: search } },
-        //                 { packingSpecification: { contains: search } },
-        //                 { chemicalCode: { contains: search } },
-        //                 { chemicalName: { contains: search } },
-        //                 { dosageForm: { contains: search } },
-        //                 { registrationNumber: { contains: search } },
-        //               ],
-        //             },
-        //           },
-        //         ],
-        //       }
-        //     : {}),
-        // },
-        include: {
-          medicine: true,
-        },
-      });
-      const listProduct = await prisma.productIntoStock.findMany({
-        // where: {
-        //   ...(search
-        //     ? {
-        //         OR: [
-        //           { lotNumber: { contains: search } },
-        //           {
-        //             product: {
-        //               OR: [
-        //                 { productName: { contains: search } },
-        //                 { packingSpecification: { contains: search } },
-        //                 { chemicalCode: { contains: search } },
-        //                 { chemicalName: { contains: search } },
-        //                 { dosageForm: { contains: search } },
-        //                 { registrationNumber: { contains: search } },
-        //               ],
-        //             },
-        //           },
-        //         ],
-        //       }
-        //     : {}),
-        // },
-        include: {
-          product: true,
-        },
-      });
-      let data = listMedicine.concat(listProduct);
-
-      // filter by type
-      // switch (checkType) {
-      //   case 'preSoldOut':
-      //     data = data.filter((item) => item.inputQuantity - item.soldQuantity / item.specification < 2);
-      //     break;
-      //   case 'preExp':
-      //     data = data.filter((item) => {
-      //       const currentDate = new Date();
-      //       const expDate = new Date(item.expirationDate);
-      //       const nextThirtyDate = new Date();
-      //       nextThirtyDate.setDate(currentDate.getDate() + 30);
-      //       return expDate > currentDate && expDate <= nextThirtyDate;
-      //     });
-      //     break;
-      //   case 'exp':
-      //     data = data.filter((item) => {
-      //       const currentDate = new Date();
-      //       const expDate = new Date(item.expirationDate);
-      //       return expDate <= currentDate;
-      //     });
-      //     break;
-      //   default:
-      //     break;
-      // }
-
+      //* detach merchandise for each status
+      // all
       const allMerchandise = data;
+      // prepare sold out
       const preSoldOutMerchandise = data.filter(
         (item) => item.inputQuantity - item.soldQuantity / item.specification < 2,
       );
+      // prepare expired
       const preExpMerchandise = data.filter((item) => {
         const currentDate = new Date();
         const expDate = new Date(item.expirationDate);
@@ -120,7 +54,7 @@ module.exports = {
         nextThirtyDate.setDate(currentDate.getDate() + 30);
         return expDate > currentDate && expDate <= nextThirtyDate;
       });
-
+      // expired
       const expMerchandise = data.filter((item) => {
         const currentDate = new Date();
         const expDate = new Date(item.expirationDate);
