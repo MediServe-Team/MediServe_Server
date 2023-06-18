@@ -7,7 +7,7 @@ const { createAccessToken, createRefreshToken, verifyRefreshToken } = require('.
 module.exports = {
   register: async (req, res, next) => {
     try {
-      const { email, password, firstName, lastName } = req.body;
+      const { email, password, name, fullName } = req.body;
 
       // validation data
       const { error } = registerValidate(req.body);
@@ -30,8 +30,8 @@ module.exports = {
       const user = {
         email,
         password: hashPassword,
-        firstName,
-        lastName,
+        name,
+        fullName,
       };
 
       const saveUser = await prisma.User.create({
@@ -70,8 +70,8 @@ module.exports = {
         throw createError.Unauthorized();
       }
 
-      const accessToken = await createAccessToken(user.id, user.email);
-      const refreshToken = await createRefreshToken(user.id, user.email);
+      const accessToken = await createAccessToken(user.id, user.email, user.role);
+      const refreshToken = await createRefreshToken(user.id, user.email, user.role);
 
       // save new refresh token
       await prisma.User.update({
@@ -93,6 +93,7 @@ module.exports = {
       });
 
       res.status(200).json({
+        status: 200,
         user,
         accessToken, // continue save accesstoken to store redux
       });
@@ -109,8 +110,8 @@ module.exports = {
       }
 
       const payload = await verifyRefreshToken(refreshToken);
-      const newAccessToken = await createAccessToken(payload.userId, payload.email);
-      const newRefreshToken = await createRefreshToken(payload.userId, payload.email);
+      const newAccessToken = await createAccessToken(payload.userId, payload.email, payload.role);
+      const newRefreshToken = await createRefreshToken(payload.userId, payload.email, payload.role);
 
       // Update refresh token to DB
       await prisma.User.update({

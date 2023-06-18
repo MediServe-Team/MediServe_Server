@@ -3,6 +3,7 @@
 
 CREATE TABLE permit(
 	permit_id SERIAL,
+	permit_index INTEGER UNIQUE NOT NULL,
 	permit_name VARCHAR(100) NOT NULL,
 	PRIMARY KEY (permit_id)
 )
@@ -18,23 +19,20 @@ CREATE TABLE permit(
 -- account		: quản lý tài khoản
 
 
-CREATE TABLE role(
-	role_id SERIAL,
-	role_name VARCHAR(20) NOT NULL,
-	permit_list INTEGER ARRAY,
-	PRIMARY KEY (role_id)
-)
+-- create enum role
+CREATE TYPE tp_role AS ENUM ('USER', 'STAFF', 'ADMIN');
 
+-- select enum_range(null::tp_role)
 
 -- create uuid-ossp module
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-
 CREATE TABLE users(
 	user_id UUID DEFAULT uuid_generate_v4(),
-	role_id INTEGER NOT NULL,
+	role tp_role NOT NULL,
+	permit_list INTEGER ARRAY,
 	email TEXT NOT NULL,
-	password VARCHAR(20) NOT NULL,
+	password TEXT NOT NULL,
 	name VARCHAR(20),
 	full_name VARCHAR(40),
 	gender BOOLEAN,
@@ -50,8 +48,7 @@ CREATE TABLE users(
 	refresh_token TEXT DEFAULT '',
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (user_id),
-	CONSTRAINT fk_users_role FOREIGN KEY(role_id) REFERENCES role(role_id)
+	PRIMARY KEY (user_id)
 )
 
 
@@ -82,6 +79,7 @@ CREATE TABLE category(
 
 CREATE TABLE medicine_unit(
 	medicine_unit_id SERIAL,
+	type VARCHAR(20) NOT NULL,
 	unit_name VARCHAR(20),
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -139,10 +137,9 @@ CREATE TABLE product(
 )
 
 
-
-CREATE TABLE detail_into_stock(
+CREATE TABLE medicine_into_stock(
 	invoice_into_stock_id INTEGER NOT NULL,
-	merchandise_id INTEGER NOT NULL,
+	medicine_id INTEGER NOT NULL,
 	lot_number VARCHAR(40),
 	manufacture_date DATE NOT NULL,
 	expiration_date	DATE NOT NULL,
@@ -154,10 +151,30 @@ CREATE TABLE detail_into_stock(
 	destroyed BOOLEAN,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (invoice_into_stock_id, merchandise_id),
-	CONSTRAINT fk_detailintostock_invoiceintostock FOREIGN KEY(invoice_into_stock_id) REFERENCES invoice_into_stock(invoice_into_stock_id),
-	CONSTRAINT fk_detailintostock_medicine FOREIGN KEY(merchandise_id) REFERENCES medicine(medicine_id),
-	CONSTRAINT fk_detailintostock_product FOREIGN KEY(merchandise_id) REFERENCES product(product_id)
+	PRIMARY KEY (invoice_into_stock_id, medicine_id),
+	CONSTRAINT fk_medicineintostock_invoiceintostock FOREIGN KEY(invoice_into_stock_id) REFERENCES invoice_into_stock(invoice_into_stock_id),
+	CONSTRAINT fk_medicineintostock_medicine FOREIGN KEY(medicine_id) REFERENCES medicine(medicine_id)
+)
+
+
+
+CREATE TABLE product_into_stock(
+	invoice_into_stock_id INTEGER NOT NULL,
+	product_id INTEGER NOT NULL,
+	lot_number VARCHAR(40),
+	manufacture_date DATE NOT NULL,
+	expiration_date	DATE NOT NULL,
+	input_quantity INTEGER,
+	specification INTEGER,
+	import_price INTEGER,
+	sell_price	INTEGER,
+	sold_quantity INTEGER,
+	destroyed BOOLEAN,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (invoice_into_stock_id, product_id),
+	CONSTRAINT fk_productintostock_invoiceintostock FOREIGN KEY(invoice_into_stock_id) REFERENCES invoice_into_stock(invoice_into_stock_id),
+	CONSTRAINT fk_productintostock_product FOREIGN KEY(product_id) REFERENCES product(product_id)
 )
 
 

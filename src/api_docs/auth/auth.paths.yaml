@@ -1,0 +1,11 @@
+/users/register:
+  post:
+    summary: Create new user
+    tags:
+      - User
+    requestBody:
+      description: Provide an user register object to be able to register account
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Register'

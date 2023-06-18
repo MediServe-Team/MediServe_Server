@@ -3,12 +3,11 @@ const Joi = require('joi');
 const registerValidate = (data) => {
   const accountSchema = Joi.object({
     email: Joi.string().email().lowercase().required(),
-    firstName: Joi.string().required(),
-    lastName: Joi.string().required(),
+    name: Joi.string().required(),
+    fullName: Joi.string().required(),
     password: Joi.string().min(8).max(32).required(),
     confirmPassword: Joi.ref('password'),
   });
-
   return accountSchema.validate(data);
 };
 
@@ -17,11 +16,18 @@ const loginValidate = (data) => {
     email: Joi.string().email().lowercase().required(),
     password: Joi.string().min(8).max(32).required(),
   });
-
   return accountSchema.validate(data);
+};
+
+const passwordValidate = (data) => {
+  const passwordSchema = Joi.object({
+    password: Joi.string().min(8).max(32).required(),
+  });
+  return passwordSchema.validate(data);
 };
 
 module.exports = {
   registerValidate,
   loginValidate,
+  passwordValidate,
 };

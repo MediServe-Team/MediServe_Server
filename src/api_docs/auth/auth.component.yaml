@@ -1,0 +1,33 @@
+components:
+  schemas:
+    Register:
+      type: object
+      required:
+        - email
+        - password
+        - name
+        - dateOfbirth
+        - gender
+      properties:
+        email:
+          type: string
+          description: The email of user
+        password:
+          type: string
+          description: The password of user
+        name:
+          type: string
+          description: The nick name of user
+        gender:
+          type: boolean
+          description: The gender of user ( 0 = female, 1 = male )
+        dateOfbirth:
+          type: date
+          description: The date of birth of user
+
+      example:
+        email: phuchv@gmail.com
+        password: 12345678
+        name: Phuc
+        gender: 1
+        dateOfbirth: 16-07-2002
