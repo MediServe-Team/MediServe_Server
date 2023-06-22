@@ -92,14 +92,13 @@ model Category {
   @@map("category")
 }
 
-model MedicineUnit {
-  id        Int       @id @default(autoincrement()) @map("medicine_unit_id")
-  type      String    @map("type")
+model Unit {
+  id        Int       @id @default(autoincrement()) @map("unit_id")
   unitName  String    @map("unit_name")
   createdAt DateTime? @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
-  @@map("medicine_unit")
+  @@map("unit")
 }
 
 model Medicine {

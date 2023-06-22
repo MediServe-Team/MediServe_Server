@@ -77,13 +77,12 @@ CREATE TABLE category(
 )
 
 
-CREATE TABLE medicine_unit(
-	medicine_unit_id SERIAL,
-	type VARCHAR(20) NOT NULL,
+CREATE TABLE unit(
+	unit_id SERIAL,
 	unit_name VARCHAR(20),
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (medicine_unit_id)
+	PRIMARY KEY (unit_id)
 )
 
 
