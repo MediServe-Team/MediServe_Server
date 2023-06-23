@@ -1,6 +1,21 @@
 const medicineServices = require('../services/medicine.services');
 
 module.exports = {
+  getMedicineByCategory: async (req, res, next) => {
+    try {
+      const { categoryId } = req.params;
+      const { pageNumber, limit, searchValue } = req.query;
+      const data = await medicineServices.getMedicineByCategory(categoryId, pageNumber, limit, searchValue);
+      res.status(200).json({
+        status: 200,
+        message: 'get medicine by category success',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   getDetailMedicine: async (req, res, next) => {
     try {
       const { id } = req.params;
