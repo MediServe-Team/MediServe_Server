@@ -1,6 +1,7 @@
 const { number } = require('joi');
 const { prisma } = require('../config/prisma.instance');
 const createError = require('http-errors');
+const { storeImg, removeImg } = require('../helpers/cloudinary');
 
 module.exports = {
   getMedicineByCategory: async (categoryId, pageNumber, limit, searchValue = '') => {
@@ -93,7 +94,23 @@ module.exports = {
 
   createMedicine: async (newData) => {
     try {
-      const returnData = await prisma.medicine.create({ data: newData });
+      const { medicineImage, barCode, ...rest } = newData;
+      const imgStore = await Promise.all([
+        new Promise(async (resolve) => {
+          const imgURL = await storeImg(medicineImage);
+          resolve(imgURL);
+        }),
+        new Promise(async (resolve) => {
+          const imgURL = await storeImg(barCode);
+          resolve(imgURL);
+        }),
+      ]);
+
+      const newMedicine = { ...rest, medicineImage: imgStore[0].url, barCode: imgStore[1].url };
+      const returnData = await prisma.medicine.create({
+        data: newMedicine,
+      });
+
       return Promise.resolve(returnData);
     } catch (err) {
       throw err;
