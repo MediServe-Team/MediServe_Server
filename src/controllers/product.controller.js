@@ -1,6 +1,21 @@
 const productServices = require('../services/product.services');
 
 module.exports = {
+  getProductByCategory: async (req, res, next) => {
+    try {
+      const { categoryId } = req.params;
+      const { pageNumber, limit, searchValue } = req.query;
+      const data = await productServices.getProductByCategory(categoryId, pageNumber, limit, searchValue);
+      res.status(200).json({
+        status: 200,
+        message: 'get products by category success',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   getAllProduct: async (req, res, next) => {
     try {
       const { pageNumber, limit } = req.query;
