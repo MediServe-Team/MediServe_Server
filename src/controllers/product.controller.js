@@ -46,7 +46,7 @@ module.exports = {
 
   createProduct: async (req, res, next) => {
     try {
-      const newProduct = ({
+      const {
         categoryId,
         productName,
         registrationNumber,
@@ -61,7 +61,23 @@ module.exports = {
         productFunction,
         productImage,
         note,
-      } = req.body);
+      } = req.body;
+      const newProduct = {
+        categoryId,
+        productName,
+        registrationNumber,
+        dosageForm,
+        productContent,
+        chemicalName,
+        chemicalCode,
+        packingSpecification,
+        barCode,
+        sellUnit,
+        inputUnit,
+        productFunction,
+        productImage: productImage[0],
+        note,
+      };
       const data = await productServices.createProduct(newProduct);
       res.status(201).json({
         status: 201,

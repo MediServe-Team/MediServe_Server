@@ -1,5 +1,6 @@
 const { prisma } = require('../config/prisma.instance');
 const createError = require('http-errors');
+const { storeImg, removeImg } = require('../helpers/cloudinary');
 
 module.exports = {
   getProductByCategory: async (categoryId, pageNumber, limit, searchValue = '') => {
@@ -83,10 +84,26 @@ module.exports = {
     }
   },
 
-  createProduct: async (newProduct) => {
+  createProduct: async (newData) => {
     try {
-      const data = await prisma.product.create({ data: newProduct });
-      return Promise.resolve(data);
+      const { productImage, barCode, ...rest } = newData;
+      const imgStore = await Promise.all([
+        new Promise(async (resolve) => {
+          const imgURL = await storeImg(productImage);
+          resolve(imgURL);
+        }),
+        new Promise(async (resolve) => {
+          const imgURL = await storeImg(barCode);
+          resolve(imgURL);
+        }),
+      ]);
+
+      const newProduct = { ...rest, productImage: imgStore[0].url, barCode: imgStore[1].url };
+      const returnData = await prisma.product.create({
+        data: newProduct,
+      });
+
+      return Promise.resolve(returnData);
     } catch (err) {
       throw err;
     }
