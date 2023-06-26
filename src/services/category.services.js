@@ -46,4 +46,13 @@ module.exports = {
       throw err;
     }
   },
+
+  deleteCategoryById: async (id) => {
+    try {
+      const data = await prisma.category.delete({ where: { id: Number(id) } });
+      return Promise.resolve(data);
+    } catch (err) {
+      throw err;
+    }
+  },
 };
