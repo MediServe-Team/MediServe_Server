@@ -1,6 +1,21 @@
 const productServices = require('../services/product.services');
 
 module.exports = {
+  getProductByCategory: async (req, res, next) => {
+    try {
+      const { categoryId } = req.params;
+      const { pageNumber, limit, searchValue } = req.query;
+      const data = await productServices.getProductByCategory(categoryId, pageNumber, limit, searchValue);
+      res.status(200).json({
+        status: 200,
+        message: 'get products by category success',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   getAllProduct: async (req, res, next) => {
     try {
       const { pageNumber, limit } = req.query;
@@ -31,7 +46,7 @@ module.exports = {
 
   createProduct: async (req, res, next) => {
     try {
-      const newProduct = ({
+      const {
         categoryId,
         productName,
         registrationNumber,
@@ -46,7 +61,23 @@ module.exports = {
         productFunction,
         productImage,
         note,
-      } = req.body);
+      } = req.body;
+      const newProduct = {
+        categoryId,
+        productName,
+        registrationNumber,
+        dosageForm,
+        productContent,
+        chemicalName,
+        chemicalCode,
+        packingSpecification,
+        barCode,
+        sellUnit,
+        inputUnit,
+        productFunction,
+        productImage: productImage[0],
+        note,
+      };
       const data = await productServices.createProduct(newProduct);
       res.status(201).json({
         status: 201,

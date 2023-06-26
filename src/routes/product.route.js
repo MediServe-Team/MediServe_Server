@@ -2,6 +2,9 @@ const express = require('express');
 const productController = require('../controllers/product.controller');
 const router = express.Router();
 
+//* [GET] /products/by-category/:categoryId
+router.get('/by-category/:categoryId', productController.getProductByCategory);
+
 //* [GET] /products/paginate     -> get all product
 router.get('/paginate', productController.getAllProduct);
 

@@ -16,7 +16,7 @@ function route(app) {
   app.use('/api/invoice-into-stocks', invoiceIntoStockRouter);
   app.use('/api/categories', categoryRouter);
   app.use('/api/medicines', medicineRouter);
-  app.use('/api/medicine-units', medicineUnitRouter);
+  app.use('/api/units', medicineUnitRouter);
   app.use('/api/products', productRouter);
   app.use('/api/receipts', receiptRouter);
   app.use('/api/prescriptions', prescriptionRouter);

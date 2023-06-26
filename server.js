@@ -10,19 +10,20 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const path = require('path');
 
-app.use(express.json());
-app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
-const PORT = process.env.PORT || 5000;
-
 app.use(
   cors({
     origin: 'http://localhost:3000',
     credentials: true,
   }),
 );
+
+app.use(express.json({ limit: '60mb' }));
+app.use(express.json());
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+const PORT = process.env.PORT || 5000;
 
 // set up Swagger
 const swaggerDefinition = {

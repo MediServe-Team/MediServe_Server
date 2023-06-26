@@ -79,7 +79,7 @@ module.exports = {
         applyToAffectedAreaCode,
         applyToAffectedArea,
         medicineFunction,
-        medicineImage,
+        medicineImage: medicineImage[0],
         isPrescription,
         note,
       };

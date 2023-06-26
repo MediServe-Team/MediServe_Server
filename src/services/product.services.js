@@ -1,7 +1,54 @@
 const { prisma } = require('../config/prisma.instance');
 const createError = require('http-errors');
+const { storeImg, removeImg } = require('../helpers/cloudinary');
 
 module.exports = {
+  getProductByCategory: async (categoryId, pageNumber, limit, searchValue = '') => {
+    try {
+      if (!categoryId) {
+        throw createError.ExpectationFailed('expected categoryId in request.');
+      }
+      let data;
+      let totalRows;
+      const skip = pageNumber && limit ? (Number(pageNumber) - 1) * Number(limit) : undefined;
+      const searchCondition = [
+        { productName: { contains: searchValue, mode: 'insensitive' } },
+        { packingSpecification: { contains: searchValue, mode: 'insensitive' } },
+      ];
+
+      switch (categoryId) {
+        case 'all':
+          data = await prisma.product.findMany({
+            where: {
+              OR: [...searchCondition],
+            },
+            skip,
+            take: Number(limit),
+          });
+          totalRows = await prisma.product.count({ where: { OR: [...searchCondition] } });
+          break;
+
+        default:
+          data = await prisma.product.findMany({
+            where: {
+              category: { id: Number(categoryId) },
+              OR: [...searchCondition],
+            },
+            skip,
+            take: Number(limit),
+          });
+          totalRows = await prisma.product.count({
+            where: { category: { id: Number(categoryId) }, OR: [...searchCondition] },
+          });
+          break;
+      }
+
+      return Promise.resolve({ products: data, totalPage: Math.ceil(totalRows / limit), currentpage: pageNumber });
+    } catch (err) {
+      throw err;
+    }
+  },
+
   getAllProduct: async (pageNumber, limit) => {
     try {
       if (!pageNumber || !limit) {
@@ -37,10 +84,26 @@ module.exports = {
     }
   },
 
-  createProduct: async (newProduct) => {
+  createProduct: async (newData) => {
     try {
-      const data = await prisma.product.create({ data: newProduct });
-      return Promise.resolve(data);
+      const { productImage, barCode, ...rest } = newData;
+      const imgStore = await Promise.all([
+        new Promise(async (resolve) => {
+          const imgURL = await storeImg(productImage);
+          resolve(imgURL);
+        }),
+        new Promise(async (resolve) => {
+          const imgURL = await storeImg(barCode);
+          resolve(imgURL);
+        }),
+      ]);
+
+      const newProduct = { ...rest, productImage: imgStore[0].url, barCode: imgStore[1].url };
+      const returnData = await prisma.product.create({
+        data: newProduct,
+      });
+
+      return Promise.resolve(returnData);
     } catch (err) {
       throw err;
     }

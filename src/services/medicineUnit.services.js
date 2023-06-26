@@ -2,36 +2,27 @@ const { prisma } = require('../config/prisma.instance.js');
 const createError = require('http-errors');
 
 module.exports = {
-  getAllUnitOfMedicine: async (type) => {
+  getAllUnit: async () => {
     try {
-      let data;
-      if (type === 'all') {
-        data = await prisma.medicineUnit.findMany();
-      } else {
-        data = await prisma.medicineUnit.findMany({ where: { type: { equals: type } } });
-      }
+      const data = await prisma.unit.findMany();
       return Promise.resolve(data);
     } catch (err) {
       throw err;
     }
   },
 
-  createNewMedicineUnit: async (newUnit) => {
+  createNewUnit: async (newUnit) => {
     try {
-      // check type of unit
-      if (!newUnit.type || !['import', 'sell'].includes(newUnit.type)) {
-        throw createError.ExpectationFailed('expected value of type in [import, sell]');
-      }
-      const data = await prisma.medicineUnit.create({ data: newUnit });
+      const data = await prisma.unit.create({ data: newUnit });
       return Promise.resolve(data);
     } catch (err) {
       throw err;
     }
   },
 
-  deleteMedicineUnitById: async (id) => {
+  deleteUnitById: async (id) => {
     try {
-      const data = await prisma.medicineUnit.delete({ where: { id: Number(id) } });
+      const data = await prisma.unit.delete({ where: { id: Number(id) } });
       return Promise.resolve(data);
     } catch (err) {
       throw err;
