@@ -1,6 +1,19 @@
 const { prisma } = require('../config/prisma.instance');
 
 module.exports = {
+  filterPrescription: async (searchValue) => {
+    try {
+      const data = await prisma.prescription.findMany({
+        where: {
+          diagnose: { contains: searchValue, mode: 'insensitive' },
+        },
+      });
+      return data;
+    } catch (err) {
+      throw err;
+    }
+  },
+
   getAllPrescription: async () => {
     try {
       const data = await prisma.prescription.findMany();
