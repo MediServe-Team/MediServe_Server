@@ -19,10 +19,21 @@ module.exports = {
     }
   },
 
-  createNewPrescription: async (newPrescription) => {
+  createNewPrescription: async (newPrescription, listMedicines) => {
     try {
-      const data = await prisma.prescription.create({ data: newPrescription });
-      return Promise.resolve(data);
+      const prescriptionSaved = await prisma.prescription.create({
+        data: newPrescription,
+      });
+      listGuide = listMedicines.map((guide) => ({
+        medicineId: Number(guide?.medicineId),
+        prescriptionId: Number(prescriptionSaved.id),
+        morning: Number(guide?.morning),
+        noon: Number(guide?.noon),
+        night: Number(guide?.night),
+        quantity: Number(guide?.quantity),
+      }));
+      const newGuide = await prisma.medicineGuide.createMany({ data: listGuide });
+      return Promise.resolve({ newPrescription: prescriptionSaved, newGuide });
     } catch (err) {
       throw err;
     }

@@ -28,11 +28,16 @@ module.exports = {
     }
   },
 
-  //!!! handle create with medicine_guide and calc total price
   createPrescription: async (req, res, next) => {
     try {
-      const newPrescription = ({ staffId, receiptId, diagnose, isDose, totalPrice, note } = req.body);
-      const data = await prescriptionServices.createNewPrescription(newPrescription);
+      const { staffId, receiptId, diagnose, isDose, note, listMedicines } = req.body;
+      let newPrescription = {};
+      if (receiptId && !isDose) {
+        newPrescription = { staffId, receiptId, diagnose, isDose, note };
+      } else {
+        newPrescription = { staffId, diagnose, isDose, note };
+      }
+      const data = await prescriptionServices.createNewPrescription(newPrescription, listMedicines);
       res.status(201).json({
         status: 201,
         message: 'create new prescription success',

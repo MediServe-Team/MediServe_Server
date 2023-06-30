@@ -238,16 +238,16 @@ model DetailReceipt {
 model Prescription {
   id             Int             @id @default(autoincrement()) @map("prescription_id")
   staffId        String          @map("staff_id")
-  receiptId      Int             @map("receipt_id")
+  receiptId      Int?            @map("receipt_id")
   diagnose       String          @map("diagnose")
   isDose         Boolean         @default(false) @map("is_dose")
-  totalPrice     Int             @map("total_price")
+  totalPrice     Int?            @map("total_price")
   note           String?         @map("note")
   createdAt      DateTime?       @default(now()) @map("created_at")
   updatedAt      DateTime?       @updatedAt @map("updated_at")
   // reference
   staff          User            @relation(fields: [staffId], references: [id])
-  receipt        Receipt         @relation(fields: [receiptId], references: [id])
+  receipt        Receipt?        @relation(fields: [receiptId], references: [id])
   MedicineGuides MedicineGuide[]
 
   @@map("prescription")
@@ -259,6 +259,7 @@ model MedicineGuide {
   morning        Float        @map("morning")
   noon           Float        @map("noon")
   night          Float        @map("night")
+  quantity       Int          @map("quantity")
   // reference
   medicine       Medicine     @relation(fields: [medicineId], references: [id])
   prescription   Prescription @relation(fields: [prescriptionId], references: [id])
