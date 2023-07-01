@@ -61,12 +61,12 @@ module.exports = {
     }
   },
 
-  //!!! hanlde update with medicine_guide and reCalc total price
   updatePrescription: async (req, res, next) => {
     try {
       const { id } = req.params;
-      const newPrescription = ({ diagnose, note } = req.body);
-      const data = await prescriptionServices.updatePrescription(id, newPrescription);
+      const { diagnose, note, listMedicines } = req.body;
+      const newPrescription = { diagnose, note };
+      const data = await prescriptionServices.updatePrescription(id, newPrescription, listMedicines);
       res.status(200).json({
         status: 200,
         message: 'update a prescription success',
