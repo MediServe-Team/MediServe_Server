@@ -61,7 +61,7 @@ CREATE TABLE invoice_into_stock(
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (invoice_into_stock_id),
-	CONSTRAINT fk_invoiceintostock_users FOREIGN KEY(staff_id) REFERENCES users(user_id)
+	CONSTRAINT fk_invoiceintostock_users FOREIGN KEY(staff_id) REFERENCES users(user_id) ON DELETE CASCADE
 )
 
 
@@ -108,7 +108,7 @@ CREATE TABLE medicine(
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (medicine_id),
-	CONSTRAINT fk_medicine_category FOREIGN KEY(category_id) REFERENCES category(category_id)
+	CONSTRAINT fk_medicine_category FOREIGN KEY(category_id) REFERENCES category(category_id) ON DELETE CASCADE
 )
 
 
@@ -132,7 +132,7 @@ CREATE TABLE product(
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (product_id),
-	CONSTRAINT fk_product_category FOREIGN KEY(category_id) REFERENCES category(category_id)
+	CONSTRAINT fk_product_category FOREIGN KEY(category_id) REFERENCES category(category_id) ON DELETE CASCADE
 )
 
 
@@ -151,8 +151,8 @@ CREATE TABLE medicine_into_stock(
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (invoice_into_stock_id, medicine_id),
-	CONSTRAINT fk_medicineintostock_invoiceintostock FOREIGN KEY(invoice_into_stock_id) REFERENCES invoice_into_stock(invoice_into_stock_id),
-	CONSTRAINT fk_medicineintostock_medicine FOREIGN KEY(medicine_id) REFERENCES medicine(medicine_id)
+	CONSTRAINT fk_medicineintostock_invoiceintostock FOREIGN KEY(invoice_into_stock_id) REFERENCES invoice_into_stock(invoice_into_stock_id) ON DELETE CASCADE,
+	CONSTRAINT fk_medicineintostock_medicine FOREIGN KEY(medicine_id) REFERENCES medicine(medicine_id) ON DELETE CASCADE
 )
 
 
@@ -172,8 +172,8 @@ CREATE TABLE product_into_stock(
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (invoice_into_stock_id, product_id),
-	CONSTRAINT fk_productintostock_invoiceintostock FOREIGN KEY(invoice_into_stock_id) REFERENCES invoice_into_stock(invoice_into_stock_id),
-	CONSTRAINT fk_productintostock_product FOREIGN KEY(product_id) REFERENCES product(product_id)
+	CONSTRAINT fk_productintostock_invoiceintostock FOREIGN KEY(invoice_into_stock_id) REFERENCES invoice_into_stock(invoice_into_stock_id) ON DELETE CASCADE,
+	CONSTRAINT fk_productintostock_product FOREIGN KEY(product_id) REFERENCES product(product_id) ON DELETE CASCADE
 )
 
 
@@ -188,8 +188,8 @@ CREATE TABLE receipt(
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (receipt_id),
-	CONSTRAINT fk_receipt_staff FOREIGN KEY(staff_id) REFERENCES users(user_id),
-	CONSTRAINT fk_receipt_customer FOREIGN KEY(customer_id) REFERENCES users(user_id)
+	CONSTRAINT fk_receipt_staff FOREIGN KEY(staff_id) REFERENCES users(user_id) ON DELETE CASCADE,
+	CONSTRAINT fk_receipt_customer FOREIGN KEY(customer_id) REFERENCES users(user_id) ON DELETE CASCADE
 )
 
 
@@ -202,8 +202,8 @@ CREATE TABLE detail_receipt(
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (receipt_id, product_id),
-	CONSTRAINT fk_detailreceipt_receipt FOREIGN KEY(receipt_id) REFERENCES receipt(receipt_id),
-	CONSTRAINT fk_detailreceipt_product FOREIGN KEY(product_id) REFERENCES product(product_id)
+	CONSTRAINT fk_detailreceipt_receipt FOREIGN KEY(receipt_id) REFERENCES receipt(receipt_id) ON DELETE CASCADE,
+	CONSTRAINT fk_detailreceipt_product FOREIGN KEY(product_id) REFERENCES product(product_id) ON DELETE CASCADE
 )
 
 
@@ -218,8 +218,8 @@ CREATE TABLE prescription(
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (prescription_id),
-	CONSTRAINT fk_prescription_staff FOREIGN KEY(staff_id) REFERENCES users(user_id),
-	CONSTRAINT fk_prescription_receipt FOREIGN KEY(receipt_id) REFERENCES receipt(receipt_id)
+	CONSTRAINT fk_prescription_staff FOREIGN KEY(staff_id) REFERENCES users(user_id) ON DELETE CASCADE,
+	CONSTRAINT fk_prescription_receipt FOREIGN KEY(receipt_id) REFERENCES receipt(receipt_id) ON DELETE CASCADE
 )
 
 
@@ -233,6 +233,6 @@ CREATE TABLE medicine_guide(
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (medicine_id, prescription_id),
-	CONSTRAINT fk_medicineguide_medicine FOREIGN KEY(medicine_id) REFERENCES medicine(medicine_id),
-	CONSTRAINT fk_medicine_guide_prescription FOREIGN KEY(prescription_id) REFERENCES prescription(prescription_id)
+	CONSTRAINT fk_medicineguide_medicine FOREIGN KEY(medicine_id) REFERENCES medicine(medicine_id) ON DELETE CASCADE,
+	CONSTRAINT fk_medicine_guide_prescription FOREIGN KEY(prescription_id) REFERENCES prescription(prescription_id) ON DELETE CASCADE
 )

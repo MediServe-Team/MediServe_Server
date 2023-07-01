@@ -77,7 +77,6 @@ module.exports = {
     }
   },
 
-  //!!! handle delete all reference
   deletePrescription: async (req, res, next) => {
     try {
       const { id } = req.params;
