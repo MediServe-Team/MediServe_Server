@@ -2,6 +2,9 @@ const express = require('express');
 const prescriptionController = require('../controllers/prescription.controller');
 const router = express.Router();
 
+//* [GET] /prescriptions/filter?searchValue=""
+router.get('/filter', prescriptionController.filterPrescription);
+
 //* [GET] /prescriptions/all    -> Get all precriptions
 router.get('/all', prescriptionController.getaAllPrescription);
 

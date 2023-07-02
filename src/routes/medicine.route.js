@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const medicineController = require('../controllers/medicine.controller');
 
+//* [GET] /medicines/filter?searchValue=""
+router.get('/filter', medicineController.filterMedicines);
+
 //* [GET] /medicines/by-category/:categoryId
 router.get('/by-category/:categoryId', medicineController.getMedicineByCategory);
 

@@ -34,7 +34,7 @@ module.exports = {
       const newCategory = { categoryName, isMedicine, isDefault, note };
       const returnData = await categoryServices.createCategory(newCategory);
       res.status(200).json({
-        status: 200,
+        status: 201,
         message: 'create new category succes',
         data: returnData,
       });
@@ -62,7 +62,13 @@ module.exports = {
   //!!! hanldle delete all reference when delete category
   deleteCategory: async (req, res, next) => {
     try {
-      //
+      const { id } = req.params;
+      const returnData = await categoryServices.deleteCategoryById(id);
+      res.status(200).json({
+        status: 200,
+        message: 'delete category success',
+        data: returnData,
+      });
     } catch (err) {
       next(err);
     }

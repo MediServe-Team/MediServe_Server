@@ -1,6 +1,19 @@
 const prescriptionServices = require('../services/prescription.services');
 
 module.exports = {
+  filterPrescription: async (req, res, next) => {
+    try {
+      const { searchValue } = req.query;
+      const data = await prescriptionServices.filterPrescription(searchValue);
+      res.status(200).json({
+        status: 200,
+        message: 'filter prescription success!',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
   getaAllPrescription: async (req, res, next) => {
     try {
       const data = await prescriptionServices.getAllPrescription();
@@ -28,11 +41,16 @@ module.exports = {
     }
   },
 
-  //!!! handle create with medicine_guide and calc total price
   createPrescription: async (req, res, next) => {
     try {
-      const newPrescription = ({ staffId, receiptId, diagnose, isDose, totalPrice, note } = req.body);
-      const data = await prescriptionServices.createNewPrescription(newPrescription);
+      const { staffId, receiptId, diagnose, isDose, note, listMedicines } = req.body;
+      let newPrescription = {};
+      if (receiptId && !isDose) {
+        newPrescription = { staffId, receiptId, diagnose, isDose, note };
+      } else {
+        newPrescription = { staffId, diagnose, isDose, note };
+      }
+      const data = await prescriptionServices.createNewPrescription(newPrescription, listMedicines);
       res.status(201).json({
         status: 201,
         message: 'create new prescription success',
@@ -43,12 +61,12 @@ module.exports = {
     }
   },
 
-  //!!! hanlde update with medicine_guide and reCalc total price
   updatePrescription: async (req, res, next) => {
     try {
       const { id } = req.params;
-      const newPrescription = ({ diagnose, note } = req.body);
-      const data = await prescriptionServices.updatePrescription(id, newPrescription);
+      const { diagnose, note, listMedicines } = req.body;
+      const newPrescription = { diagnose, note };
+      const data = await prescriptionServices.updatePrescription(id, newPrescription, listMedicines);
       res.status(200).json({
         status: 200,
         message: 'update a prescription success',
@@ -59,7 +77,6 @@ module.exports = {
     }
   },
 
-  //!!! handle delete all reference
   deletePrescription: async (req, res, next) => {
     try {
       const { id } = req.params;
