@@ -92,6 +92,7 @@ module.exports = {
         prisma.medicineGuide.deleteMany({
           where: {
             medicineId: { in: medicineDeleteIds },
+            prescriptionId: Number(id),
           },
         }),
 
