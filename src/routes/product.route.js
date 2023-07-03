@@ -2,6 +2,9 @@ const express = require('express');
 const productController = require('../controllers/product.controller');
 const router = express.Router();
 
+//* [GET] /products/filter?searchValue=""
+router.get('/filter', productController.filterProduct);
+
 //* [GET] /products/by-category/:categoryId
 router.get('/by-category/:categoryId', productController.getProductByCategory);
 

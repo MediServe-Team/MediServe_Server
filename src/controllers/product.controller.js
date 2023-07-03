@@ -1,6 +1,20 @@
 const productServices = require('../services/product.services');
 
 module.exports = {
+  filterProduct: async (req, res, next) => {
+    try {
+      const { searchValue } = req.query;
+      const data = await productServices.fiterProduct(searchValue);
+      res.status(200).json({
+        status: 200,
+        message: 'filter products success',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   getProductByCategory: async (req, res, next) => {
     try {
       const { categoryId } = req.params;

@@ -3,6 +3,19 @@ const createError = require('http-errors');
 const { storeImg, removeImg } = require('../helpers/cloudinary');
 
 module.exports = {
+  fiterProduct: async (searchValue) => {
+    try {
+      const data = await prisma.product.findMany({
+        where: {
+          productName: { contains: searchValue, mode: 'insensitive' },
+        },
+      });
+      return Promise.resolve(data);
+    } catch (err) {
+      throw err;
+    }
+  },
+
   getProductByCategory: async (categoryId, pageNumber, limit, searchValue = '') => {
     try {
       if (!categoryId) {
