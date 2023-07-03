@@ -3,6 +3,9 @@ const router = express.Router();
 const userController = require('../controllers/user.controller');
 const { verifyStaffAdminAccess, verifyAdminAccess, verifyAccessToken } = require('../helpers/jwt.service');
 
+//* [GET] /users/filter-customer?SearchValue=""   -> filter customer
+router.get('/filter-customer', userController.filterCustomer);
+
 //! can use: ADMIN
 //* [GET] /users/all     -> Get all user
 router.get('/all', verifyAccessToken, verifyAdminAccess, userController.getAllUser);

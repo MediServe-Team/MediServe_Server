@@ -5,11 +5,20 @@ const { storeImg, removeImg } = require('../helpers/cloudinary');
 module.exports = {
   fiterProduct: async (searchValue) => {
     try {
-      const data = await prisma.product.findMany({
+      let data = await prisma.productIntoStock.findMany({
         where: {
-          productName: { contains: searchValue, mode: 'insensitive' },
+          product: {
+            productName: { contains: searchValue, mode: 'insensitive' },
+          },
+        },
+        include: {
+          product: {
+            select: { id: true, productName: true, sellUnit: true },
+          },
         },
       });
+
+      data = data.filter((product) => product.inputQuantity - product.soldQuantity > 0);
       return Promise.resolve(data);
     } catch (err) {
       throw err;
