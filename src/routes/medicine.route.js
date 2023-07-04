@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const medicineController = require('../controllers/medicine.controller');
 
+//* [GET] /medicines/filter-stock?searchValue=""
+router.get('/filter-stock', medicineController.filterMedicineInStock);
+
 //* [GET] /medicines/filter?searchValue=""
 router.get('/filter', medicineController.filterMedicines);
 
@@ -22,7 +25,5 @@ router.put('/update/:id', medicineController.updateMedicine);
 
 //* [DELETE] /medicines/delete/:id      -> Delete a medicine in system
 router.delete('/delete/:id', medicineController.deleteMedicine);
-
-//!!!   handle sắp hết hàng, sắp hết hạn, sắp đến hạn.
 
 module.exports = router;

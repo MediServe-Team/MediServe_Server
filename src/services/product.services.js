@@ -13,7 +13,7 @@ module.exports = {
         },
         include: {
           product: {
-            select: { id: true, productName: true, sellUnit: true },
+            select: { id: true, productName: true, sellUnit: true, packingSpecification: true },
           },
         },
       });
