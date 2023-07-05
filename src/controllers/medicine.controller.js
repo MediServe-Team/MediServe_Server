@@ -1,6 +1,20 @@
 const medicineServices = require('../services/medicine.services');
 
 module.exports = {
+  filterMedicineInStock: async (req, res, next) => {
+    try {
+      const { searchValue } = req.query;
+      const data = await medicineServices.filterMedicineInStock(searchValue);
+      res.status(200).json({
+        status: 200,
+        message: 'filter medicine in stock success',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   filterMedicines: async (req, res, next) => {
     try {
       const { searchValue } = req.query;

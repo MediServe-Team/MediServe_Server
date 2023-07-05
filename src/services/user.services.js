@@ -4,6 +4,20 @@ const createError = require('http-errors');
 const bcrypt = require('bcrypt');
 
 module.exports = {
+  filterCustomer: async (searchValue) => {
+    try {
+      const data = await prisma.user.findMany({
+        where: {
+          fullName: { contains: searchValue, mode: 'insensitive' },
+          role: 'USER',
+        },
+      });
+      return Promise.resolve(data);
+    } catch (err) {
+      next(err);
+    }
+  },
+
   getUserInfo: async (id) => {
     try {
       const data = await prisma.user.findUnique({

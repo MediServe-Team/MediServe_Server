@@ -1,7 +1,20 @@
-const { prisma } = require('../config/prisma.instance.js');
 const userServices = require('../services/user.services.js');
 
 module.exports = {
+  filterCustomer: async (req, res, next) => {
+    try {
+      const { searchValue } = req.query;
+      const data = await userServices.filterCustomer(searchValue);
+      res.status(200).json({
+        status: 200,
+        message: 'filter customer success',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   getUser: async (req, res, next) => {
     try {
       const { id } = req.params;

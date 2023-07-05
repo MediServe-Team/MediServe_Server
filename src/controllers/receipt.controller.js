@@ -37,11 +37,37 @@ module.exports = {
     }
   },
 
-  //!!! handle create receipt: from data about "receipt detail", "prescription"
   createReceipt: async (req, res, next) => {
     try {
-      const newReceipt = ({ staffId, customerId, totalPayment, givenByCustomer, note } = req.body);
-      const data = await receiptServices.createReceipt(newReceipt);
+      const {
+        staffId,
+        customerId,
+        totalPayment,
+        givenByCustomer,
+        note,
+        guest,
+        products,
+        medicines,
+        prescriptionAvailbles,
+        newPrescriptions,
+      } = req.body;
+
+      const newReceipt = {
+        staffId,
+        totalPayment,
+        givenByCustomer,
+        note,
+      };
+
+      const data = await receiptServices.createReceipt(
+        newReceipt,
+        guest,
+        customerId,
+        products,
+        medicines,
+        prescriptionAvailbles,
+        newPrescriptions,
+      );
       res.status(201).json({
         status: 200,
         message: 'create new receipt success',
