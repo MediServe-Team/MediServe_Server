@@ -61,6 +61,19 @@ model User {
   @@map("users")
 }
 
+model Guest {
+  id        Int       @id @default(autoincrement()) @map("guest_id")
+  fullName  String    @map("full_name")
+  gender    Boolean?  @map("gender")
+  age       Int?      @map("age")
+  address   String?   @map("address")
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  Receipt   Receipt[] @relation("GuestGetReceipt")
+
+  @@map("guest")
+}
+
 model InvoiceIntoStock {
   id                 Int                 @id @default(autoincrement()) @map("invoice_into_stock_id")
   staffId            String              @map("staff_id")
@@ -102,58 +115,59 @@ model Unit {
 }
 
 model Medicine {
-  id                      Int                 @id @default(autoincrement()) @map("medicine_id")
-  categoryId              Int                 @map("category_id")
-  medicineName            String              @map("medicine_name")
-  registrationNumber      String              @map("registration_number")
-  dosageForm              String              @map("dosage_form")
-  productContent          String              @map("product_content")
-  chemicalName            String              @map("chemical_name")
-  chemicalCode            String              @map("chemical_code")
-  packingSpecification    String              @map("packing_specification")
-  barCode                 String              @map("bar_code")
-  sellUnit                String              @map("sell_unit")
-  inputUnit               String              @map("input_unit")
-  applyToAffectedAreaCode String              @map("apply_to_affected_area_code")
-  applyToAffectedArea     String              @map("apply_to_affected_area")
-  medicineFunction        String?             @map("medicine_function")
-  medicineImage           String?             @map("medicine_image")
-  isPrescription          Boolean             @map("is_prescription")
-  note                    String?             @map("note")
-  createdAt               DateTime?           @default(now()) @map("created_at")
-  updatedAt               DateTime?           @updatedAt @map("updated_at")
+  id                      Int                     @id @default(autoincrement()) @map("medicine_id")
+  categoryId              Int                     @map("category_id")
+  medicineName            String                  @map("medicine_name")
+  registrationNumber      String                  @map("registration_number")
+  dosageForm              String                  @map("dosage_form")
+  productContent          String                  @map("product_content")
+  chemicalName            String                  @map("chemical_name")
+  chemicalCode            String                  @map("chemical_code")
+  packingSpecification    String                  @map("packing_specification")
+  barCode                 String                  @map("bar_code")
+  sellUnit                String                  @map("sell_unit")
+  inputUnit               String                  @map("input_unit")
+  applyToAffectedAreaCode String                  @map("apply_to_affected_area_code")
+  applyToAffectedArea     String                  @map("apply_to_affected_area")
+  medicineFunction        String?                 @map("medicine_function")
+  medicineImage           String?                 @map("medicine_image")
+  isPrescription          Boolean                 @map("is_prescription")
+  note                    String?                 @map("note")
+  createdAt               DateTime?               @default(now()) @map("created_at")
+  updatedAt               DateTime?               @updatedAt @map("updated_at")
   // foreign key
-  category                Category            @relation(fields: [categoryId], references: [id])
+  category                Category                @relation(fields: [categoryId], references: [id])
   // reference
   MedicineIntoStocks      MedicineIntoStock[]
   MedicineGuides          MedicineGuide[]
+  DetailReceiptMedicines  DetailReceiptMedicine[]
 
   @@map("medicine")
 }
 
 model Product {
-  id                   Int                @id @default(autoincrement()) @map("product_id")
-  categoryId           Int                @map("category_id")
-  productName          String             @map("product_name")
-  registrationNumber   String             @map("registration_number")
-  dosageForm           String             @map("dosage_form")
-  productContent       String             @map("product_content")
-  chemicalName         String             @map("chemical_name")
-  chemicalCode         String             @map("chemical_code")
-  packingSpecification String             @map("packing_specification")
-  barCode              String             @map("bar_code")
-  sellUnit             String             @map("sell_unit")
-  inputUnit            String             @map("input_unit")
-  productFunction      String?            @map("product_function")
-  productImage         String?            @map("product_image")
-  note                 String?            @map("note")
-  createdAt            DateTime?          @default(now()) @map("created_at")
-  updatedAt            DateTime?          @updatedAt @map("updated_at")
+  id                    Int                    @id @default(autoincrement()) @map("product_id")
+  categoryId            Int                    @map("category_id")
+  productName           String                 @map("product_name")
+  registrationNumber    String                 @map("registration_number")
+  dosageForm            String                 @map("dosage_form")
+  productContent        String                 @map("product_content")
+  chemicalName          String                 @map("chemical_name")
+  chemicalCode          String                 @map("chemical_code")
+  packingSpecification  String                 @map("packing_specification")
+  barCode               String                 @map("bar_code")
+  sellUnit              String                 @map("sell_unit")
+  inputUnit             String                 @map("input_unit")
+  productFunction       String?                @map("product_function")
+  productImage          String?                @map("product_image")
+  note                  String?                @map("note")
+  createdAt             DateTime?              @default(now()) @map("created_at")
+  updatedAt             DateTime?              @updatedAt @map("updated_at")
   // foreign key
-  category             Category           @relation(fields: [categoryId], references: [id])
+  category              Category               @relation(fields: [categoryId], references: [id])
   // reference 
-  ProductIntoStocks    ProductIntoStock[]
-  DetailReceipts       DetailReceipt[]
+  ProductIntoStocks     ProductIntoStock[]
+  DetailReceiptProducts DetailReceiptProduct[]
 
   @@map("product")
 }
@@ -203,24 +217,27 @@ model ProductIntoStock {
 }
 
 model Receipt {
-  id              Int             @id @default(autoincrement()) @map("receipt_id")
-  staffId         String          @map("staff_id")
-  customerId      String          @map("customer_id")
-  totalPayment    Int             @map("total_payment")
-  givenByCustomer Int             @map("given_by_customer")
-  note            String?         @map("note")
-  createdAt       DateTime?       @default(now()) @map("created_at")
-  updatedAt       DateTime?       @updatedAt @map("updated_at")
+  id                         Int                         @id @default(autoincrement()) @map("receipt_id")
+  staffId                    String                      @map("staff_id")
+  customerId                 String?                     @map("customer_id")
+  guestId                    Int?                        @map("guest_id")
+  totalPayment               Int                         @map("total_payment")
+  givenByCustomer            Int                         @map("given_by_customer")
+  note                       String?                     @map("note")
+  createdAt                  DateTime?                   @default(now()) @map("created_at")
+  updatedAt                  DateTime?                   @updatedAt @map("updated_at")
   // foreign key
-  staff           User            @relation(fields: [staffId], references: [id], "StaffCreateReceipt")
-  customer        User            @relation(fields: [customerId], references: [id], "CustomerGetReceipt")
-  DetailReceipts  DetailReceipt[]
-  Prescriptions   Prescription[]
+  staff                      User?                       @relation(fields: [staffId], references: [id], "StaffCreateReceipt")
+  customer                   User?                       @relation(fields: [customerId], references: [id], "CustomerGetReceipt")
+  guest                      Guest?                      @relation(fields: [guestId], references: [id], "GuestGetReceipt")
+  DetailReceiptProducts      DetailReceiptProduct[]
+  DetailReceiptMedicines     DetailReceiptMedicine[]
+  DetailReceiptPrescriptions DetailReceiptPrescription[]
 
   @@map("receipt")
 }
 
-model DetailReceipt {
+model DetailReceiptProduct {
   receiptId  Int       @map("receipt_id")
   productId  Int       @map("product_id")
   quantity   Int       @map("quantity")
@@ -231,24 +248,53 @@ model DetailReceipt {
   receipt    Receipt   @relation(fields: [receiptId], references: [id])
   product    Product   @relation(fields: [productId], references: [id])
 
-  @@id([receiptId, productId], name: "detailReceiptId")
-  @@map("detail_receipt")
+  @@id([receiptId, productId], name: "detailReceiptProductId")
+  @@map("detail_receipt_product")
+}
+
+model DetailReceiptMedicine {
+  receiptId  Int       @map("receipt_id")
+  medicineId Int       @map("medicine_id")
+  quantity   Int       @map("quantity")
+  totalPrice Int       @map("total_price")
+  createdAt  DateTime? @default(now()) @map("created_at")
+  updatedAt  DateTime? @updatedAt @map("updated_at")
+  // foreign key
+  receipt    Receipt   @relation(fields: [receiptId], references: [id])
+  medicine   Medicine  @relation(fields: [medicineId], references: [id])
+
+  @@id([receiptId, medicineId], name: "detailReceiptMedicineId")
+  @@map("detail_receipt_medicine")
+}
+
+model DetailReceiptPrescription {
+  receiptId      Int          @map("receipt_id")
+  prescriptionId Int          @map("prescription_id")
+  quantity       Int          @map("quantity")
+  totalPrice     Int?         @map("total_price")
+  createdAt      DateTime?    @default(now()) @map("created_at")
+  updatedAt      DateTime?    @updatedAt @map("updated_at")
+  // foreign key
+  receipt        Receipt      @relation(fields: [receiptId], references: [id])
+  prescription   Prescription @relation(fields: [prescriptionId], references: [id])
+
+  @@id([receiptId, prescriptionId], name: "detailReceiptprescriptionId")
+  @@map("detail_receipt_prescription")
 }
 
 model Prescription {
-  id             Int             @id @default(autoincrement()) @map("prescription_id")
-  staffId        String          @map("staff_id")
-  receiptId      Int?            @map("receipt_id")
-  diagnose       String          @map("diagnose")
-  isDose         Boolean         @default(false) @map("is_dose")
-  totalPrice     Int?            @map("total_price")
-  note           String?         @map("note")
-  createdAt      DateTime?       @default(now()) @map("created_at")
-  updatedAt      DateTime?       @updatedAt @map("updated_at")
+  id                         Int                         @id @default(autoincrement()) @map("prescription_id")
+  staffId                    String                      @map("staff_id")
+  diagnose                   String                      @map("diagnose")
+  isDose                     Boolean                     @default(false) @map("is_dose")
+  totalPrice                 Int?                        @map("total_price")
+  note                       String?                     @map("note")
+  createdAt                  DateTime?                   @default(now()) @map("created_at")
+  updatedAt                  DateTime?                   @updatedAt @map("updated_at")
   // reference
-  staff          User            @relation(fields: [staffId], references: [id])
-  receipt        Receipt?        @relation(fields: [receiptId], references: [id])
-  MedicineGuides MedicineGuide[]
+  staff                      User                        @relation(fields: [staffId], references: [id])
+  MedicineGuides             MedicineGuide[]
+  DetailReceiptPrescriptions DetailReceiptPrescription[]
 
   @@map("prescription")
 }

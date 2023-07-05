@@ -52,6 +52,18 @@ CREATE TABLE users(
 )
 
 
+CREATE TABLE guest(
+	guest_id SERIAL,
+	full_name VARCHAR(40),
+	gender BOOLEAN,
+	age INTEGER,
+	address TEXT,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (guest_id)
+)
+
+
 CREATE TABLE invoice_into_stock(
 	invoice_into_stock_id SERIAL,
 	staff_id UUID NOT NULL,
@@ -181,7 +193,8 @@ CREATE TABLE product_into_stock(
 CREATE TABLE receipt(
 	receipt_id SERIAL,
 	staff_id UUID NOT NULL,
-	customer_id UUID NOT NULL,
+	customer_id UUID,
+	guest_id INTEGER, 
 	total_payment INTEGER DEFAULT 0,
 	given_by_customer INTEGER DEFAULT 0,
 	note TEXT,
@@ -190,11 +203,12 @@ CREATE TABLE receipt(
 	PRIMARY KEY (receipt_id),
 	CONSTRAINT fk_receipt_staff FOREIGN KEY(staff_id) REFERENCES users(user_id) ON DELETE CASCADE,
 	CONSTRAINT fk_receipt_customer FOREIGN KEY(customer_id) REFERENCES users(user_id) ON DELETE CASCADE
+	CONSTRAINT fk_receipt_guest FOREIGN KEY(guest_id) REFERENCES guest(guest_id) ON DELETE CASCADE
 )
 
 
 
-CREATE TABLE detail_receipt(
+CREATE TABLE detail_receipt_product(
 	receipt_id INTEGER NOT NULL,
 	product_id INTEGER NOT NULL,
 	quantity INTEGER,
@@ -202,15 +216,41 @@ CREATE TABLE detail_receipt(
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (receipt_id, product_id),
-	CONSTRAINT fk_detailreceipt_receipt FOREIGN KEY(receipt_id) REFERENCES receipt(receipt_id) ON DELETE CASCADE,
-	CONSTRAINT fk_detailreceipt_product FOREIGN KEY(product_id) REFERENCES product(product_id) ON DELETE CASCADE
+	CONSTRAINT fk_receiptproduct_receipt FOREIGN KEY(receipt_id) REFERENCES receipt(receipt_id) ON DELETE CASCADE,
+	CONSTRAINT fk_receiptproduct_product FOREIGN KEY(product_id) REFERENCES product(product_id) ON DELETE CASCADE
 )
+
+
+CREATE TABLE detail_receipt_medicine(
+	receipt_id INTEGER NOT NULL,
+	medicine_id INTEGER NOT NULL,
+	quantity INTEGER,
+	total_price INTEGER,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (receipt_id, medicine_id),
+	CONSTRAINT fk_receiptmedicine_receipt FOREIGN KEY(receipt_id) REFERENCES receipt(receipt_id) ON DELETE CASCADE,
+	CONSTRAINT fk_receiptmedicine_medicine FOREIGN KEY(medicine_id) REFERENCES medicine(medicine_id) ON DELETE CASCADE
+)
+
+
+CREATE TABLE detail_receipt_prescription(
+	receipt_id INTEGER NOT NULL,
+	prescription_id INTEGER NOT NULL,
+	quantity INTEGER,
+	total_price INTEGER,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (receipt_id, prescription_id),
+	CONSTRAINT fk_receiptprescription_receipt FOREIGN KEY(receipt_id) REFERENCES receipt(receipt_id) ON DELETE CASCADE,
+	CONSTRAINT fk_receiptprescription_prescription FOREIGN KEY(prescription_id) REFERENCES prescription(prescription_id) ON DELETE CASCADE
+)
+
 
 
 CREATE TABLE prescription(
 	prescription_id SERIAL,
 	staff_id UUID NOT NULL,
-	receipt_id INTEGER,
 	diagnose TEXT NOT NULL,
 	is_dose BOOLEAN,
 	total_price INTEGER,
@@ -219,7 +259,6 @@ CREATE TABLE prescription(
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (prescription_id),
 	CONSTRAINT fk_prescription_staff FOREIGN KEY(staff_id) REFERENCES users(user_id) ON DELETE CASCADE,
-	CONSTRAINT fk_prescription_receipt FOREIGN KEY(receipt_id) REFERENCES receipt(receipt_id) ON DELETE CASCADE
 )
 
 
