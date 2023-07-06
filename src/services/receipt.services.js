@@ -3,15 +3,22 @@ const { createNewPrescription } = require('./prescription.services');
 const createError = require('http-errors');
 
 module.exports = {
-  getAllReceiptWithCondition: async (staffId, customerId, fromDate, toDate, sort, pageNumber, limit) => {
+  getAllReceiptWithCondition: async (staffName, customerName, fromDate, toDate, sort, pageNumber, limit) => {
     try {
       //* defind option
       const skip = pageNumber && limit ? (Number(pageNumber) - 1) * Number(limit) : null;
       const order =
         sort && (sort.toLowerCase() === 'asc' || sort.toLowerCase() === 'desc') ? sort.toLowerCase() : 'desc';
       const whereClause = {
-        ...(staffId ? { staffId: { equals: staffId } } : {}),
-        ...(customerId ? { customerId: { equals: customerId } } : {}),
+        ...(staffName ? { staff: { fullName: { contains: staffName, mode: 'insensitive' } } } : {}),
+        ...(customerName
+          ? {
+              OR: [
+                { customer: { fullName: { contains: customerName, mode: 'insensitive' } } },
+                { guest: { fullName: { contains: customerName, mode: 'insensitive' } } },
+              ],
+            }
+          : {}),
         ...(fromDate && toDate
           ? {
               createdAt: {
@@ -27,6 +34,11 @@ module.exports = {
         return new Promise(async (resolve) => {
           const receipts = await prisma.receipt.findMany({
             where: whereClause,
+            include: {
+              staff: { select: { fullName: true } },
+              customer: { select: { fullName: true } },
+              guest: { select: { fullName: true } },
+            },
             ...(pageNumber && limit ? { skip: skip, take: Number(limit) } : {}),
             orderBy: { createdAt: order },
           });

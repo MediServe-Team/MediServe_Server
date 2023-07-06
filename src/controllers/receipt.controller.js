@@ -3,10 +3,10 @@ const receiptServices = require('../services/receipt.services');
 module.exports = {
   filterReceipts: async (req, res, next) => {
     try {
-      const { staffId, customerId, fromDate, toDate, sort, pageNumber, limit } = req.query;
+      const { staffName, customerName, fromDate, toDate, sort, pageNumber, limit } = req.query;
       const data = await receiptServices.getAllReceiptWithCondition(
-        staffId,
-        customerId,
+        staffName,
+        customerName,
         fromDate,
         toDate,
         sort,
