@@ -306,6 +306,7 @@ model MedicineGuide {
   noon           Float        @map("noon")
   night          Float        @map("night")
   quantity       Int          @map("quantity")
+  totalPrice     Int?         @map("total_price")
   // reference
   medicine       Medicine     @relation(fields: [medicineId], references: [id])
   prescription   Prescription @relation(fields: [prescriptionId], references: [id])

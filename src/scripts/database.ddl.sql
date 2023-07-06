@@ -269,6 +269,7 @@ CREATE TABLE medicine_guide(
 	noon REAL,
 	night REAL,
 	quantity INT,
+	total_price INT,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (medicine_id, prescription_id),

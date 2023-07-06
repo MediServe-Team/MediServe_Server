@@ -3,15 +3,22 @@ const { createNewPrescription } = require('./prescription.services');
 const createError = require('http-errors');
 
 module.exports = {
-  getAllReceiptWithCondition: async (staffId, customerId, fromDate, toDate, sort, pageNumber, limit) => {
+  getAllReceiptWithCondition: async (staffName, customerName, fromDate, toDate, sort, pageNumber, limit) => {
     try {
       //* defind option
       const skip = pageNumber && limit ? (Number(pageNumber) - 1) * Number(limit) : null;
       const order =
         sort && (sort.toLowerCase() === 'asc' || sort.toLowerCase() === 'desc') ? sort.toLowerCase() : 'desc';
       const whereClause = {
-        ...(staffId ? { staffId: { equals: staffId } } : {}),
-        ...(customerId ? { customerId: { equals: customerId } } : {}),
+        ...(staffName ? { staff: { fullName: { contains: staffName, mode: 'insensitive' } } } : {}),
+        ...(customerName
+          ? {
+              OR: [
+                { customer: { fullName: { contains: customerName, mode: 'insensitive' } } },
+                { guest: { fullName: { contains: customerName, mode: 'insensitive' } } },
+              ],
+            }
+          : {}),
         ...(fromDate && toDate
           ? {
               createdAt: {
@@ -27,6 +34,11 @@ module.exports = {
         return new Promise(async (resolve) => {
           const receipts = await prisma.receipt.findMany({
             where: whereClause,
+            include: {
+              staff: { select: { fullName: true } },
+              customer: { select: { fullName: true } },
+              guest: { select: { fullName: true } },
+            },
             ...(pageNumber && limit ? { skip: skip, take: Number(limit) } : {}),
             orderBy: { createdAt: order },
           });
@@ -55,7 +67,78 @@ module.exports = {
 
   getReceiptById: async (id) => {
     try {
-      const data = await prisma.receipt.findUnique(id);
+      const data = await prisma.receipt.findUnique({
+        where: { id: Number(id) },
+        select: {
+          //* receipts
+          id: true,
+          totalPayment: true,
+          givenByCustomer: true,
+          note: true,
+          //* list products
+          DetailReceiptProducts: {
+            select: {
+              quantity: true,
+              totalPrice: true,
+              product: {
+                select: {
+                  id: true,
+                  productName: true,
+                  sellUnit: true,
+                },
+              },
+            },
+          },
+          //* list medicines
+          DetailReceiptMedicines: {
+            select: {
+              quantity: true,
+              totalPrice: true,
+              medicine: {
+                select: {
+                  id: true,
+                  medicineName: true,
+                  sellUnit: true,
+                },
+              },
+            },
+          },
+          //* list presctiptions
+          DetailReceiptPrescriptions: {
+            select: {
+              quantity: true,
+              totalPrice: true,
+              prescription: {
+                select: {
+                  diagnose: true,
+                  totalPrice: true,
+                  note: true,
+                  MedicineGuides: {
+                    select: {
+                      morning: true,
+                      noon: true,
+                      night: true,
+                      quantity: true,
+                      totalPrice: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          //* customer
+          customer: {
+            select: {
+              id: true,
+              fullName: true,
+              age: true,
+              gender: true,
+              address: true,
+            },
+          },
+          guest: true,
+        },
+      });
       return Promise.resolve(data);
     } catch (err) {
       throw err;
@@ -68,7 +151,7 @@ module.exports = {
     customerId,
     products,
     medicines,
-    prescriptionAvailbles,
+    // prescriptionAvailbles,
     newPrescriptions,
   ) => {
     try {
@@ -116,6 +199,7 @@ module.exports = {
           });
 
         // //* create detail prescription for availble dose
+        // ? current app not use this feature:
         const createDetailPresAvailReceipt = () =>
           new Promise(async (resolve) => {
             const listAvailPresDetail = prescriptionAvailbles.map((pres) => ({
@@ -142,7 +226,12 @@ module.exports = {
                   note: pres.note,
                 };
                 const data = await createNewPrescription(newPrescription, pres.listMedicines);
-                return { receiptId: receipt.id, prescriptionId: data.newPrescription.id, quantity: pres.quantity };
+                return {
+                  receiptId: receipt.id,
+                  prescriptionId: data.newPrescription.id,
+                  quantity: pres.quantity,
+                  totalPrice: pres.totalPrice,
+                };
               }),
             );
             // create detail prescription receipt
@@ -156,7 +245,6 @@ module.exports = {
         const data = await Promise.all([
           createDetailProductReceipt(),
           createDetailMedicineReceipt(),
-          createDetailPresAvailReceipt(),
           createDetailPresReceipt(),
         ]);
 
