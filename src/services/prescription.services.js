@@ -59,6 +59,7 @@ module.exports = {
         noon: Number(guide?.noon),
         night: Number(guide?.night),
         quantity: Number(guide?.quantity),
+        totalPrice: Number(guide?.totalPrice),
       }));
       const newGuide = await prisma.medicineGuide.createMany({ data: listGuide });
       return Promise.resolve({ newPrescription: prescriptionSaved, newGuide });

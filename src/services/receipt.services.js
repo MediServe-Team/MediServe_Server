@@ -67,7 +67,78 @@ module.exports = {
 
   getReceiptById: async (id) => {
     try {
-      const data = await prisma.receipt.findUnique(id);
+      const data = await prisma.receipt.findUnique({
+        where: { id: Number(id) },
+        select: {
+          //* receipts
+          id: true,
+          totalPayment: true,
+          givenByCustomer: true,
+          note: true,
+          //* list products
+          DetailReceiptProducts: {
+            select: {
+              quantity: true,
+              totalPrice: true,
+              product: {
+                select: {
+                  id: true,
+                  productName: true,
+                  sellUnit: true,
+                },
+              },
+            },
+          },
+          //* list medicines
+          DetailReceiptMedicines: {
+            select: {
+              quantity: true,
+              totalPrice: true,
+              medicine: {
+                select: {
+                  id: true,
+                  medicineName: true,
+                  sellUnit: true,
+                },
+              },
+            },
+          },
+          //* list presctiptions
+          DetailReceiptPrescriptions: {
+            select: {
+              quantity: true,
+              totalPrice: true,
+              prescription: {
+                select: {
+                  diagnose: true,
+                  totalPrice: true,
+                  note: true,
+                  MedicineGuides: {
+                    select: {
+                      morning: true,
+                      noon: true,
+                      night: true,
+                      quantity: true,
+                      totalPrice: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          //* customer
+          customer: {
+            select: {
+              id: true,
+              fullName: true,
+              age: true,
+              gender: true,
+              address: true,
+            },
+          },
+          guest: true,
+        },
+      });
       return Promise.resolve(data);
     } catch (err) {
       throw err;
