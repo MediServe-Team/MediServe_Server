@@ -48,7 +48,7 @@ module.exports = {
         guest,
         products,
         medicines,
-        prescriptionAvailbles,
+        // prescriptionAvailbles,
         newPrescriptions,
       } = req.body;
 
@@ -65,11 +65,11 @@ module.exports = {
         customerId,
         products,
         medicines,
-        prescriptionAvailbles,
+        // prescriptionAvailbles,
         newPrescriptions,
       );
       res.status(201).json({
-        status: 200,
+        status: 201,
         message: 'create new receipt success',
         data,
       });

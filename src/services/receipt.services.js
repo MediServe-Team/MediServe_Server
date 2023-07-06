@@ -68,7 +68,7 @@ module.exports = {
     customerId,
     products,
     medicines,
-    prescriptionAvailbles,
+    // prescriptionAvailbles,
     newPrescriptions,
   ) => {
     try {
@@ -116,6 +116,7 @@ module.exports = {
           });
 
         // //* create detail prescription for availble dose
+        // ? current app not use this feature:
         const createDetailPresAvailReceipt = () =>
           new Promise(async (resolve) => {
             const listAvailPresDetail = prescriptionAvailbles.map((pres) => ({
@@ -142,7 +143,12 @@ module.exports = {
                   note: pres.note,
                 };
                 const data = await createNewPrescription(newPrescription, pres.listMedicines);
-                return { receiptId: receipt.id, prescriptionId: data.newPrescription.id, quantity: pres.quantity };
+                return {
+                  receiptId: receipt.id,
+                  prescriptionId: data.newPrescription.id,
+                  quantity: pres.quantity,
+                  totalPrice: pres.totalPrice,
+                };
               }),
             );
             // create detail prescription receipt
@@ -156,7 +162,6 @@ module.exports = {
         const data = await Promise.all([
           createDetailProductReceipt(),
           createDetailMedicineReceipt(),
-          createDetailPresAvailReceipt(),
           createDetailPresReceipt(),
         ]);
 
