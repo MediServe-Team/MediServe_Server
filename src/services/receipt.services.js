@@ -120,6 +120,12 @@ module.exports = {
                       night: true,
                       quantity: true,
                       totalPrice: true,
+                      medicine: {
+                        select: {
+                          medicineName: true,
+                          sellUnit: true,
+                        },
+                      },
                     },
                   },
                 },

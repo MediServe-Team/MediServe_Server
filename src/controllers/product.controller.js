@@ -136,7 +136,12 @@ module.exports = {
   deleteProduct: async (req, res, next) => {
     try {
       const { id } = req.params;
-      //!!! handle delete all reference before delete this product
+      const data = await productServices.deleteProducById(id);
+      res.status(200).json({
+        status: 200,
+        message: 'Delete product success',
+        data,
+      });
     } catch (err) {
       next(err);
     }

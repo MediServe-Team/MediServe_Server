@@ -139,4 +139,25 @@ module.exports = {
       throw err;
     }
   },
+
+  deleteProducById: async (id) => {
+    try {
+      // remove image from cloud
+      (async () => {
+        const product = await prisma.product.findFirst({ where: { id: Number(id) }, select: { productImage: true } });
+        if (product?.productImage) {
+          try {
+            removeImg(product.productImage);
+          } catch (err) {
+            return;
+          }
+        }
+      })();
+      // delete product
+      const data = await prisma.product.delete({ where: { id: Number(id) } });
+      return Promise.resolve(data);
+    } catch (err) {
+      throw err;
+    }
+  },
 };
