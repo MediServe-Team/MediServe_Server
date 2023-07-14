@@ -111,7 +111,7 @@ module.exports = {
 
   getMedicineById: async (id) => {
     try {
-      const data = await prisma.medicine.findUnique({ where: { id } });
+      const data = await prisma.medicine.findUnique({ where: { id: Number(id) } });
       return Promise.resolve(data);
     } catch (err) {
       throw err;
@@ -154,8 +154,71 @@ module.exports = {
 
   updateMedicineById: async (id, newData) => {
     try {
-      const returnData = await prisma.medicine.update({ data: newData, where: { id } });
-      return Promise.resolve(returnData);
+      const { barCode, medicineImage } = newData;
+
+      //* check barcode and medicineImage in medicine before update
+      const medicineBefore = await prisma.medicine.findFirst({
+        where: { id: Number(id) },
+        select: { barCode: true, medicineImage: true },
+      });
+
+      //* update store barcode
+      if (barCode) {
+        if (barCode !== medicineBefore.barCode) {
+          if (medicineBefore.barCode) {
+            try {
+              removeImg(medicineBefore.barCode);
+            } catch (err) {
+              return;
+            }
+          }
+          const imgURL = await storeImg(barCode);
+          newData.barCode = imgURL.url;
+        }
+      }
+
+      //* update store medicine Img
+      if (medicineImage) {
+        if (medicineImage !== medicineBefore.medicineImage) {
+          if (medicineBefore.medicineImage) {
+            try {
+              removeImg(medicineBefore.medicineImage);
+            } catch (err) {
+              return;
+            }
+          }
+          const imgURL = await storeImg(medicineImage);
+          newData.medicineImage = imgURL.url;
+        }
+      }
+
+      //* update medicine
+      const data = await prisma.medicine.update({ data: newData, where: { id: Number(id) } });
+      return Promise.resolve(data);
+    } catch (err) {
+      throw err;
+    }
+  },
+
+  deleteMedicineById: async (id) => {
+    try {
+      // remove image from cloud
+      (async () => {
+        const medicine = await prisma.medicine.findFirst({
+          where: { id: Number(id) },
+          select: { medicineImage: true },
+        });
+        if (medicine?.medicineImage) {
+          try {
+            removeImg(medicine.medicineImage);
+          } catch (err) {
+            return;
+          }
+        }
+      })();
+      // delete medicine
+      const data = await prisma.medicine.delete({ where: { id: Number(id) } });
+      return Promise.resolve(data);
     } catch (err) {
       throw err;
     }

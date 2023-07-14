@@ -165,15 +165,25 @@ module.exports = {
         note,
       };
       const returnData = await medicineServices.updateMedicineById(id, newMedicine);
+      res.status(200).json({
+        status: 200,
+        message: 'Update medicine success',
+        data: returnData,
+      });
     } catch (err) {
       next(err);
     }
   },
 
-  //!!! handle reference before delete medicine
   deleteMedicine: async (req, res, next) => {
     try {
-      //   const { id } = req.params;
+      const { id } = req.params;
+      const data = await medicineServices.deleteMedicineById(id);
+      res.status(200).json({
+        status: 200,
+        message: 'Delete medicine success',
+        data,
+      });
     } catch (err) {
       next(err);
     }
