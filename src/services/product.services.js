@@ -133,6 +133,45 @@ module.exports = {
 
   updateProductById: async (id, newProduct) => {
     try {
+      const { barCode, productImage } = newProduct;
+
+      //* check barcode and productImg in product before update
+      const productBefore = await prisma.product.findFirst({
+        where: { id: Number(id) },
+        select: { barCode: true, productImage: true },
+      });
+
+      //* update store barcode
+      if (barCode) {
+        if (barCode !== productBefore.barCode) {
+          if (productBefore.barCode) {
+            try {
+              removeImg(productBefore.barCode);
+            } catch (err) {
+              return;
+            }
+          }
+          const imgURL = await storeImg(barCode);
+          newProduct.barCode = imgURL.url;
+        }
+      }
+
+      //* update store product Img
+      if (productImage) {
+        if (productImage !== productBefore.productImage) {
+          if (productBefore.productImage) {
+            try {
+              removeImg(productBefore.productImage);
+            } catch (err) {
+              return;
+            }
+          }
+          const imgURL = await storeImg(productImage);
+          newProduct.productImage = imgURL.url;
+        }
+      }
+
+      //* update product
       const data = await prisma.product.update({ data: newProduct, where: { id: Number(id) } });
       return Promise.resolve(data);
     } catch (err) {
@@ -144,10 +183,20 @@ module.exports = {
     try {
       // remove image from cloud
       (async () => {
-        const product = await prisma.product.findFirst({ where: { id: Number(id) }, select: { productImage: true } });
+        const product = await prisma.product.findFirst({
+          where: { id: Number(id) },
+          select: { productImage: true, barCode: true },
+        });
         if (product?.productImage) {
           try {
             removeImg(product.productImage);
+          } catch (err) {
+            return;
+          }
+        }
+        if (product?.barCode) {
+          try {
+            removeImg(product.barCode);
           } catch (err) {
             return;
           }
