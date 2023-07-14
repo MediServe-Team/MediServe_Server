@@ -165,6 +165,11 @@ module.exports = {
         note,
       };
       const returnData = await medicineServices.updateMedicineById(id, newMedicine);
+      res.status(200).json({
+        status: 200,
+        message: 'Update medicine success',
+        data: returnData,
+      });
     } catch (err) {
       next(err);
     }
