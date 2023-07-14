@@ -160,4 +160,28 @@ module.exports = {
       throw err;
     }
   },
+
+  deleteMedicineById: async (id) => {
+    try {
+      // remove image from cloud
+      (async () => {
+        const medicine = await prisma.medicine.findFirst({
+          where: { id: Number(id) },
+          select: { medicineImage: true },
+        });
+        if (medicine?.medicineImage) {
+          try {
+            removeImg(medicine.medicineImage);
+          } catch (err) {
+            return;
+          }
+        }
+      })();
+      // delete medicine
+      const data = await prisma.medicine.delete({ where: { id: Number(id) } });
+      return Promise.resolve(data);
+    } catch (err) {
+      throw err;
+    }
+  },
 };
