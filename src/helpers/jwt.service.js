@@ -84,7 +84,7 @@ const verifyRefreshToken = async (token) => {
 const verifyAdminAccess = async (req, res, next) => {
   //* This middleware apply after use verify access Token.
   if (req.payload.role === 'ADMIN') next();
-  else return next(createError.Unauthorized('Only admin can to use this resource'));
+  else return next(createError.BadRequest('Only admin can to use this resource'));
 };
 
 const verifyStaffAdminAccess = async (req, res, next) => {
