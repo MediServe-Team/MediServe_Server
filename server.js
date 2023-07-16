@@ -12,7 +12,7 @@ const path = require('path');
 
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'https://mediserveserver-production.up.railway.app'],
     credentials: true,
   }),
 );
