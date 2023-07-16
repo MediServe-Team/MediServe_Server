@@ -104,7 +104,8 @@ module.exports = {
 
   refreshToken: async (req, res, next) => {
     try {
-      const { refreshToken } = req.cookies;
+      const { MediServe_refresh_token } = req.cookies;
+      const refreshToken = MediServe_refresh_token;
       if (!refreshToken) {
         next(createError.BadRequest());
       }
@@ -145,7 +146,8 @@ module.exports = {
 
   logout: async (req, res, next) => {
     try {
-      const { refreshToken } = req.body;
+      const { MediServe_refresh_token } = req.cookies;
+      const refreshToken = MediServe_refresh_token;
       if (!refreshToken) {
         next(createError.BadRequest());
       }
