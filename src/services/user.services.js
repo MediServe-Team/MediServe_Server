@@ -33,7 +33,11 @@ module.exports = {
 
   getAllUser: async () => {
     try {
-      const data = await prisma.user.findMany();
+      const data = await prisma.user.findMany({
+        where: {
+          role: { notIn: 'ADMIN' },
+        },
+      });
       return Promise.resolve(data);
     } catch (err) {
       throw err;
