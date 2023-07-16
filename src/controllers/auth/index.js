@@ -104,7 +104,7 @@ module.exports = {
 
   refreshToken: async (req, res, next) => {
     try {
-      const { refreshToken } = req.body;
+      const { refreshToken } = req.cookies;
       if (!refreshToken) {
         next(createError.BadRequest());
       }
