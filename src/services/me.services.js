@@ -13,10 +13,14 @@ module.exports = {
 
   updateProfileById: async (id, dataUpdate) => {
     try {
-      const { avatar } = dataUpdate;
+      const { avatar, certificate, identityCard } = dataUpdate;
       if (avatar) {
-        const beforeData = await prisma.user.findFirst({ where: { id }, select: { avatar: true } });
+        const beforeData = await prisma.user.findFirst({
+          where: { id },
+          select: { avatar: true, certificate: true, identityCard: true },
+        });
 
+        //* check store avatar
         if (avatar !== beforeData?.avatar) {
           if (beforeData?.avatar) {
             try {
@@ -28,6 +32,34 @@ module.exports = {
           // store new img
           const imgURL = await storeImg(avatar);
           dataUpdate.avatar = imgURL.url;
+        }
+
+        //* check store certificate
+        if (certificate !== beforeData?.certificate) {
+          if (beforeData?.certificate) {
+            try {
+              removeImg(beforeData.certificate);
+            } catch (err) {
+              return;
+            }
+          }
+          // store new img
+          const imgURL = await storeImg(certificate);
+          dataUpdate.certificate = imgURL.url;
+        }
+
+        //* check store identityCard
+        if (identityCard !== beforeData?.identityCard) {
+          if (beforeData?.identityCard) {
+            try {
+              removeImg(beforeData.identityCard);
+            } catch (err) {
+              return;
+            }
+          }
+          // store new img
+          const imgURL = await storeImg(identityCard);
+          dataUpdate.identityCard = imgURL.url;
         }
       }
       const returnData = await prisma.user.update({
