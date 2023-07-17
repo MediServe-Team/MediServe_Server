@@ -26,7 +26,8 @@ module.exports = {
             try {
               removeImg(beforeData.avatar);
             } catch (err) {
-              return;
+              console.log('~Remove image in cloudinary error!!!');
+              throw err;
             }
           }
           // store new img
