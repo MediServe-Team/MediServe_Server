@@ -20,11 +20,14 @@ module.exports = {
           select: { avatar: true, certificate: true, identityCard: true },
         });
 
+        console.log('~~update info user');
+
         //* check store avatar
         if (avatar !== beforeData?.avatar) {
           if (beforeData?.avatar) {
             try {
-              removeImg(beforeData.avatar);
+              console.log('~~try remove image');
+              await removeImg(beforeData.avatar);
             } catch (err) {
               console.log('~Remove image in cloudinary error!!!');
               throw err;
