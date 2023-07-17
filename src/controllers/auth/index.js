@@ -85,7 +85,7 @@ module.exports = {
 
       // save refresh_token to cookie of client
       res.cookie('MediServe_refresh_token', refreshToken, {
-        domain: 'https://mediserveserver-production.up.railway.app',
+        domain: 'mediserveserver-production.up.railway.app',
         path: '/',
         secure: true,
         httpOnly: true,
@@ -127,7 +127,7 @@ module.exports = {
 
       // Update refresh token in cookie
       res.cookie('MediServe_refresh_token', refreshToken, {
-        domain: 'https://mediserveserver-production.up.railway.app',
+        domain: 'mediserveserver-production.up.railway.app',
         path: '/',
         secure: true,
         httpOnly: true,
@@ -168,7 +168,7 @@ module.exports = {
 
       // clear refresh_token in cookie
       res.clearCookie('MediServe_refresh_token', {
-        domain: 'https://mediserveserver-production.up.railway.app',
+        domain: 'mediserveserver-production.up.railway.app',
         path: '/',
       });
 
