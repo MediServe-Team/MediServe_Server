@@ -1,5 +1,6 @@
 const { prisma } = require('../config/prisma.instance.js');
 const { storeImg, removeImg } = require('../helpers/cloudinary.js');
+const createError = require('http-errors');
 
 module.exports = {
   getUserById: async (id) => {
@@ -27,10 +28,11 @@ module.exports = {
           if (beforeData?.avatar) {
             try {
               console.log('~~try remove image');
+              console.log(beforeData.avatar);
               await removeImg(beforeData.avatar);
             } catch (err) {
               console.log('~Remove image in cloudinary error!!!');
-              throw err;
+              throw createError('Remove image in cloud error!');
             }
           }
           // store new img
