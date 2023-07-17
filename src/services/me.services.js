@@ -21,18 +21,13 @@ module.exports = {
           select: { avatar: true, certificate: true, identityCard: true },
         });
 
-        console.log('~~update info user');
-
         //* check store avatar
         if (avatar !== beforeData?.avatar) {
           if (beforeData?.avatar) {
             try {
-              console.log('~~try remove image');
-              console.log(beforeData.avatar);
               await removeImg(beforeData.avatar);
             } catch (err) {
-              console.log('~Remove image in cloudinary error!!!');
-              throw createError('Remove image in cloud error!');
+              throw createError('Remove avatar in cloud error!');
             }
           }
           // store new img
@@ -46,7 +41,7 @@ module.exports = {
             try {
               removeImg(beforeData.certificate);
             } catch (err) {
-              return;
+              throw createError('Remove image in cloud error!');
             }
           }
           // store new img
@@ -60,7 +55,7 @@ module.exports = {
             try {
               removeImg(beforeData.identityCard);
             } catch (err) {
-              return;
+              throw createError('Remove image in cloud error!');
             }
           }
           // store new img
