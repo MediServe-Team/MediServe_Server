@@ -3,6 +3,19 @@ const { createNewPrescription } = require('./prescription.services');
 const createError = require('http-errors');
 
 module.exports = {
+  getReceiptOfUser: async (userId) => {
+    try {
+      const data = await prisma.receipt.findMany({
+        where: {
+          customerId: userId,
+        },
+      });
+      return Promise.resolve(data);
+    } catch (err) {
+      throw err;
+    }
+  },
+
   getAllReceiptWithCondition: async (staffName, customerName, fromDate, toDate, sort, pageNumber, limit) => {
     try {
       //* defind option

@@ -2,6 +2,9 @@ const express = require('express');
 const receiptController = require('../controllers/receipt.controller');
 const router = express.Router();
 
+//* [GET] /receipt/of-user -> get all receipt of user
+router.get('/of-user/:userId', receiptController.getReceiptOfUser);
+
 //* [GET] /receipts/filter  -> filter list receipt
 router.get('/filter', receiptController.filterReceipts);
 
