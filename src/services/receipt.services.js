@@ -9,6 +9,11 @@ module.exports = {
         where: {
           customerId: userId,
         },
+        include: {
+          staff: {
+            select: { fullName: true },
+          },
+        },
       });
       return Promise.resolve(data);
     } catch (err) {
