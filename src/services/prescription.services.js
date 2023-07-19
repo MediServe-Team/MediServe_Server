@@ -6,6 +6,7 @@ module.exports = {
       const data = await prisma.prescription.findMany({
         where: {
           diagnose: { contains: searchValue, mode: 'insensitive' },
+          isDose: true,
         },
       });
       return data;
