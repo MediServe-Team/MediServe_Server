@@ -58,6 +58,7 @@ module.exports = {
         certificate,
         identityCard,
         numOfPPC,
+        permitList,
       } = req.body;
 
       const newUserInfo = {
@@ -73,6 +74,7 @@ module.exports = {
         certificate,
         identityCard,
         numOfPPC,
+        permitList,
       };
       const data = await userServices.editUserById(id, newUserInfo);
 
