@@ -1,9 +1,48 @@
 const { prisma } = require('../config/prisma.instance.js');
 const { passwordValidate } = require('../helpers/validation.js');
+const crypto = require('crypto');
+
 const createError = require('http-errors');
 const bcrypt = require('bcrypt');
 
 module.exports = {
+  createAccount: async (newData) => {
+    try {
+      const { email, role } = newData;
+      //* check email exists
+      const isExistEmail = await prisma.user.findUnique({
+        where: { email },
+      });
+      if (isExistEmail) {
+        throw createError.Conflict('This is email already exists');
+      }
+
+      //* check role and generate password
+      if (role === 'STAFF') {
+        const generatePassword = crypto.randomBytes(4).toString('hex');
+        console.log('generate pass: ', generatePassword);
+        // hash password
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(generatePassword, salt);
+        newData.password = hashPassword;
+        //!!! send to mail if success
+      } else if (role === 'USER') {
+        // hash password
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash('12345678', salt);
+        newData.password = hashPassword;
+      }
+
+      const data = await prisma.user.create({
+        data: newData,
+      });
+
+      return Promise.resolve(data);
+    } catch (err) {
+      throw err;
+    }
+  },
+
   filterCustomer: async (searchValue) => {
     try {
       const data = await prisma.user.findMany({

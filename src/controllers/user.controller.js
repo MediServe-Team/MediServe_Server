@@ -1,6 +1,21 @@
 const userServices = require('../services/user.services.js');
 
 module.exports = {
+  createAccount: async (req, res, next) => {
+    try {
+      const { email, name, fullName, address, age, dateOfBirth, phoneNumber, role } = req.body;
+      const newData = { email, name, fullName, address, age, dateOfBirth, phoneNumber, role };
+      const data = await userServices.createAccount(newData);
+      res.status(201).json({
+        status: 201,
+        message: 'create new account success!',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   filterCustomer: async (req, res, next) => {
     try {
       const { searchValue } = req.query;
