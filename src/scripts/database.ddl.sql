@@ -202,7 +202,7 @@ CREATE TABLE receipt(
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (receipt_id),
 	CONSTRAINT fk_receipt_staff FOREIGN KEY(staff_id) REFERENCES users(user_id) ON DELETE CASCADE,
-	CONSTRAINT fk_receipt_customer FOREIGN KEY(customer_id) REFERENCES users(user_id) ON DELETE CASCADE
+	CONSTRAINT fk_receipt_customer FOREIGN KEY(customer_id) REFERENCES users(user_id) ON DELETE CASCADE,
 	CONSTRAINT fk_receipt_guest FOREIGN KEY(guest_id) REFERENCES guest(guest_id) ON DELETE CASCADE
 )
 
@@ -258,7 +258,7 @@ CREATE TABLE prescription(
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (prescription_id),
-	CONSTRAINT fk_prescription_staff FOREIGN KEY(staff_id) REFERENCES users(user_id) ON DELETE CASCADE,
+	CONSTRAINT fk_prescription_staff FOREIGN KEY(staff_id) REFERENCES users(user_id) ON DELETE CASCADE
 )
 
 
